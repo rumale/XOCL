@@ -1,0 +1,133 @@
+ 
+package com.x.pim.v1
+{ 	
+    import com.x.pim.v1.*
+    
+    process ProductSearch
+	{
+		description "A consumer queries the product catalog, and gets all products back"
+
+		roles(ProductInformationConsumer, ProductInformationManager)
+	
+		workflow
+		{
+			transaction SearchProduct
+			{
+				roles(ProductInformationConsumer, ProductInformationManager)
+			}
+		}
+	}
+	
+	process ProductLookup
+	{
+		description "A consumer queries the product catalog, and gets a single product back"
+		
+		roles(ProductInformationConsumer, ProductInformationManager)
+	
+		workflow
+		{
+			transaction LookupProduct
+			{
+				roles(ProductInformationConsumer, ProductInformationManager)
+			}
+		}
+	}
+	
+	process ProductUpdate (Product product)
+	{
+		description "A product is updated in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(product[Product.Created])	
+	
+		workflow
+		{
+			any
+			{
+				// A consumer asks the PIM to update a product
+				transaction UpdateProduct
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+			}
+			
+			// The PIM informs an observer that a product was updated
+			transaction ProductUpdated
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+
+		postconditions
+		{
+			success(product[Product.Created])
+		}
+	}
+
+	process ProductCreation (Product product)
+	{
+		description "A product is created in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(product[Product.New])
+	
+		workflow 
+		{
+			any
+			{
+				// A consumer asks the PIM to create a product
+				transaction CreateProduct
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+			}
+			
+			// The PIM informs an observer that a product was created
+			transaction ProductCreated
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+
+	    postconditions
+		{
+			success(product[Product.Created])
+			failure(product[Product.New])
+		}
+	}	
+
+    process ProductDeletion (Product product)
+    {
+		description "A product is deleted in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(product[Product.Created])
+	
+		workflow
+		{
+			any
+			{
+				// A consumer asks the PIM to delete a product
+				transaction DeleteProduct
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+			}
+			
+			// The PIM informs an observer that a product was deleted
+			transaction ProductDeleted
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+		
+	    postconditions
+		{
+			success(product[Product.Deleted])
+			failure(product[Product.Created])
+		}
+	}
+}

@@ -1,0 +1,167 @@
+package com.x.pim.v1
+{
+	import com.x.pim.v1.*
+	
+    entity Product
+    {
+    	state New[Created]
+    	state Created[Deleted]
+    	state Deleted	
+    }
+    
+ 	transaction SearchProduct query
+    {
+        sender
+        {
+        	message SearchProduct
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	
+        	// A success message does not have a response timeout
+        	success SearchProductSucceeded            
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchProductFailed
+        } 
+    }
+    
+    transaction LookupProduct query
+    {
+        sender
+        {
+        	message LookupProduct
+        	{
+        		timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+
+			// A success message does not have a response timeout
+        	success LookupProductSucceeded
+            
+			// A failure message does not have a response timeout
+            failure LookupProductFailed
+        } 
+    }
+    
+    transaction ProductCreated inform
+    {
+        sender
+        {
+        	message ProductCreated
+        }
+    }
+    
+    transaction ProductUpdated inform
+    {
+        sender
+        {
+        	message ProductUpdated
+        }
+    }
+    
+    transaction ProductDeleted inform
+    {
+        sender
+        {
+        	message ProductDeleted
+        }
+    }
+    
+    transaction UpdateProduct response
+    {
+        sender
+        {
+        	message UpdateProduct
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success UpdateProductSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure UpdateProductFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction CreateProduct response
+    {
+        sender
+        {
+        	message CreateProduct
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success CreateProductSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure CreateProductFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+
+    transaction DeleteProduct response
+    {
+        sender
+        {
+        	message DeleteProduct
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success DeleteProductSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure DeleteProductFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+}

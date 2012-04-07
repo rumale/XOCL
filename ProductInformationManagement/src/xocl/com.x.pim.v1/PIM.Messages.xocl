@@ -1,0 +1,282 @@
+package com.x.pim.v1
+{
+	import com.x.core.v1.*
+	
+	record Product extends ProductData
+    {
+        // product id 
+        string id;
+    }
+    
+    record ProductData 
+    {
+        // ID of the product type 
+        string? productTypeId;
+        // descriptive name
+        array<LocalizedString>? name;
+        // short description
+        array<LocalizedString>? shortDescription;
+        // full description
+        array<LocalizedString>? _AVDL_description;
+        string? GTIN;
+        array<LocalizedString>? brand;
+        array<LocalizedString>? manufacturer;
+        string? MPN;
+        // Manufacturer suggested retail price
+        CurrencyAmount? MSRP;
+        // Minimal advertisement price
+        CurrencyAmount? MAP;
+        // product images 
+        array<Image>? images;
+        // product attributes 
+        array<ProductAttributeValue>? attributes;
+        // defines the ids of variation variables 
+        array<string>? variationFactors;
+        // list of associated SKUs
+        array<SKU>? skuList;
+    }
+    
+    record ProductAttributeValue
+    {
+    	string attributeId;
+        union {ProductTypeAttributeValue, CustomAttributeValue} attributeValue;
+    }
+    
+    record CustomAttributeValue 
+    {
+		union {null, BooleanAttributeValue, StringAttributeValue, MeasurementAttributeValue} value = null;
+    }
+ 	
+    record ProductTypeAttributeValue
+    {
+        union {ProductTypeStringAttributeValue, StringEnumerationAttributeValue, BooleanAttributeValue} value;
+    }
+    
+    record LocalizedString 
+    {
+ 		Locale? locale;
+  		string stringValue;
+ 	}
+ 	 
+	record LocalizedMeasurement 
+	{
+		Locale? locale;
+		string name;
+		string unit;
+		string value;
+	}
+	
+ 	record LocalizedNameValue 
+ 	{
+ 		Locale? locale;
+ 		string name;
+ 		string value;
+ 	}
+ 	
+	enum ProductIdType 
+	{
+		PRODUCT_ID,
+		SKU
+	}
+	
+	record ProductIdentifier 
+	{
+		string value;
+		ProductIdType type;
+	}
+	
+    record BooleanAttributeValue
+    {
+        boolean value;
+        array<LocalizedString>? attributeName;
+    }
+ 
+ 	record StringAttributeValue 
+ 	{
+ 		array<LocalizedNameValue> attributeNameValue;
+ 	}
+ 	
+ 	record MeasurementAttributeValue 
+ 	{
+ 		array<LocalizedMeasurement> localizedMeasurementValue;
+ 	}
+ 	
+    record StringEnumerationAttributeValue
+    {
+    	// valueId is the id of the value defined in ProductTaxonomy StringEnumeration 
+    	array<string> valueId;
+        // this localized value will be populated by capability 
+        map<StringAttributeValue>? attributeValues;
+    }
+ 
+    record ProductTypeStringAttributeValue
+    {
+    	// a string attribute value can optionally refer to 
+    	// a predefined value in ProductTaxonomy, or it can be localized name/value pair 
+        string? valueId = null;
+        // this localized value can be populated by capability if valueId is present 
+        // if valueId is not present, the localized values can be populated by requester 
+        StringAttributeValue? attributeValue;
+    }
+  
+    record Image
+    {
+        string url;
+   	 	// height in pixel
+   	 	int? height;
+    	// width in pixel
+        int? width;
+    	LocalizedString? label;
+    	LocalizedString? altText;
+    }
+   
+	enum ProductIdType 
+	{
+		PRODUCT_ID,
+		SKU
+	}
+	
+    record SearchProduct
+    {
+        Query _AVDL_query; //@queryType("com.x.pim.v1.Product")
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale> ? locales;
+    }
+ 
+    record SearchProductSucceeded
+    {
+        Query _AVDL_query;
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale> ? locales;
+        QueryResult queryResult;
+    }
+ 
+    record SearchProductFailed
+    {
+        Query _AVDL_query;
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale> ? locales;
+        array<Error> errors;
+    }
+     
+	record SKU
+    {
+      	//unique identifier of the SKU
+        string sku 
+        // ID of the product for this SKU 
+        string? productId;
+        // Manufacturer suggested retail price, override the field in Product
+        CurrencyAmount? MSRP;
+        // Minimal advertisement price, override the field in Product
+        CurrencyAmount? MAP;
+        // variation attributes, the list must match the variationAttributeIds in Product 
+        array<ProductAttributeValue>? variationAttributeValues;
+        // SKU specific images 
+        array<Image>? images;     
+    }
+    
+    enum FilterType 
+    {
+        SUMMARY,
+        FULL_DETAILS
+    }
+    
+    record LookupProduct
+    {
+        array<ProductIdentifier> ids;
+        FilterType? filter; 
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale> ? locales;
+    }
+ 
+    record LookupProductSucceeded
+    {
+        array<Product> products;
+        FilterType? filter; 
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale>? locales;
+    }
+    
+    record LookupProductFailed
+    {
+        array<ProductIdentifier> ids;
+        FilterType? filter; 
+        // The locale en_US will be the default if no locale is supplied in 
+        // the message.
+        array<Locale>? locales;
+        array<Error> errors;
+    }
+    
+    record UpdateProduct
+    {
+        array<Product> products;
+    }
+   
+    record UpdateProductSucceeded
+    {
+        array<Product> products;
+    }
+    
+    record UpdateProductFailed
+    {
+        array<Product> products;
+        array<Error> errors;
+    }
+
+    record ProductUpdated
+    {
+        array<Product> products;
+    }
+    	
+    record CreateProductWithId
+    {
+        array<Product> products;
+    }
+
+    record CreateProduct
+    {
+        array<ProductData> products;
+    }
+ 
+    record CreateProductSucceeded
+    {
+    	array<Product> products;
+    }
+ 
+    record CreateProductFailed
+    {
+        array<ProductData> products;
+        array<Error> errors;
+    }
+    
+    record ProductCreated
+    {
+        array<Product> products;
+    }
+    
+    record DeleteProduct
+    {
+        array<string> productIds;
+    }
+    
+    record DeleteProductSucceeded
+    {
+        array<string> productIds;
+    }
+    
+    record DeleteProductFailed
+    {
+        array<string> productIds;
+        array<Error> errors;
+    }
+    
+    record ProductDeleted
+    {
+        array<Product> products;
+    }
+}
