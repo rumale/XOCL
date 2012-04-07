@@ -1,0 +1,43 @@
+package com.x.customer.v1{	
+	import com.x.customer.v1.*
+	
+	transaction UpsertCustomer response 
+    {
+        sender
+        {
+        	message UpsertCustomer
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+         	// A success message does not have a response timeout
+        	success UpsertCustomerSucceeded        
+                    	
+        	// A failure message does not have a response timeout
+            failure UpsertCustomerFailed  
+        } 
+    }
+    
+    // Inform observers that an customer was created
+    transaction CustomerCreated inform
+    {
+        sender
+        {
+        	message CustomerCreated
+   
+        }
+    }
+    // Inform observers that an customer was updated
+    transaction CustomerUpdated inform
+    {
+        sender
+        {
+        	message CustomerUpdated
+   
+        }
+    }
+    
+}

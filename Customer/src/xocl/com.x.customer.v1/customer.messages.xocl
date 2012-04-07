@@ -1,0 +1,130 @@
+	
+package com.x.customer.v1{	
+	import com.x.core.v1.*
+	
+	record UpsertCustomer{
+		CustomerData data;
+	}
+	record UpsertCustomerSucceeded{
+		Customer data;
+	}
+    record UpsertCustomerFailed{
+		CustomerData data;
+		array<Error> errors;	
+	}
+	
+	record CustomerData {  //TODO: Security annotations here.
+		Name fullName;	   
+	    array<Address>? addresses;
+		Phone? primaryPhone;
+	    Phone? additionalPhones;
+		string? emailAddress;   		
+	}  
+	
+    record Customer extends CustomerData{
+		string id;	
+	}
+		record SearchCustomer{
+		
+		/* When this field is present, get all customers modified since this date that also match the other criteria */
+		datetime? modifiedSince;
+		
+		/**
+		 * Restrict the number of items return to this many or less.
+		 * When null, it is assumed there is no restriction
+		 */
+		long? itemsRequested;
+		
+		/**
+		 * Return the results starting from this zero-based index.
+		 * When null, items will be returned started from the first item
+		 */
+		long? startItemIndex;
+		
+		/*  */
+	}
+	
+	record SearchCustomerSucceeded{
+		
+		array<Customer> customers;
+		/**
+		 * The total number of items found by the data provider.
+		 * This field will be filled in by the result provider when supported.
+		 * Requester should not fill this out.
+		 */
+		 datetime? modifiedSince;
+		 long totalItemsFound;
+		 long? itemsRequested;
+		 long? startItemIndex;
+	}
+	
+	transaction SearchCustomer<Email> query
+    {
+        sender
+        {
+        	message SearchCustomer
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	
+        	success SearchCustomerSucceeded
+        	
+        	success<Email> SearchEmailCustomerSucceeded         
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchCustomerFailed
+        } 
+    }
+    
+    record CustomerEmail{
+		
+		string emailAddress;
+		
+		datetime lastModifiedDate;
+		
+		//ContactStatus status;  not there in magento?
+	}
+	
+
+	record SearchEmailCustomerSucceeded{
+		
+		array<CustomerEmail> customers;
+		/**
+		 * The total number of items found by the data provider.
+		 * This field will be filled in by the result provider when supported.
+		 * Requester should not fill this out.
+		 */
+		 datetime? modifiedSince;
+		 long totalItemsFound;
+		 long? itemsRequested;
+		 long? startItemIndex;
+	}
+	
+	record SearchCustomerFailed{
+		/* When this field is present, get all customers modified since this date that also match the other criteria */
+		datetime? modifiedSince;
+		
+		/**
+		 * Restrict the number of items return to this many or less.
+		 * When null, it is assumed there is no restriction
+		 */
+		long? itemsRequested;
+		
+		/**
+		 * Return the results starting from this zero-based index.
+		 * When null, items will be returned started from the first item
+		 */
+		long? startItemIndex;
+	}
+	record CustomerCreated{
+		Customer data;
+	}
+	record CustomerUpdated{
+		Customer data;
+	}
+		
+}
+	

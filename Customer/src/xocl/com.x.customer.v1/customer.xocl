@@ -1,0 +1,44 @@
+package com.x.customer.v1{
+	import com.x.customer.v1.*
+	
+	process CustomerSearch<Email>
+	{
+		description "A consumer may query for a list of customers, they may also query by last modified date"
+
+		roles(CustomerConsumer,CustomerManager)
+	
+		workflow
+		{
+			transaction SearchCustomer<Email>
+			{
+				roles(CustomerConsumer,CustomerManager)
+			}
+		}
+	}
+	process CustomerUpsert
+	{
+		description "Client needs to add or update a customer in the customer manager system"
+		roles (CustomerConsumer,CustomerManager, CustomerObserver)
+	}
+	workflow CustomerUpsert implements CustomerUpsert
+	{
+		any{
+			transaction UpsertCustomer
+			{
+				roles(CustomerConsumer,CustomerManager)
+			}
+		}
+		one{
+			transaction CustomerCreated	
+			{
+				roles(CustomerManager,CustomerObserver)
+			}
+			transaction CustomerUpdated	
+			{
+				roles(CustomerManager,CustomerObserver)
+			}
+		}
+		
+	}
+	
+}
