@@ -1,0 +1,22 @@
+package com.x.webstorecontract.v1{
+	import com.x.webstore.v1.*
+	import com.x.customer.v1.*
+	import com.x.ordermanagement.v1.*
+	
+    contract WebStore 
+    {
+    	// A description defines the purpose of the contract
+    	description "A standard web store"
+    	
+    	// A set of roles collectivley define the implementer's responsibilities
+    	roles
+    	{
+	        CustomerSearch.CustomerManager
+	 		ProcessSalesChannelOrder.CustomerManager
+	 		WebStoreMetadataProvision.WebStoreMetadataProvider
+	 		WebStoreOfferSearch.WebStoreOfferManager	   
+	    }
+	    
+	 }
+	
+}
