@@ -1,0 +1,240 @@
+package com.x.marketplace.v1{
+	
+	import com.x.saleschannel.v1.*
+	import com.x.core.v1.Error
+
+
+	/*
+		Each marketplace adapter will requires a different set of
+		credential keys with its own name/value. Please
+		check the marketplace adapter documentation for specific
+		requirements.
+		TODO:  can we make this a less private contract?
+		
+	*/
+	record Credential {
+		map<string> properties;
+	}
+
+	/*
+		Defines a marketplace account which is intended to be used for all supported marketplaces.
+	*/
+	record MarketplaceAccount {
+		string? xId ;   // ID provided by X.commerce
+		string? userMarketplaceId ;
+		string? siteCode ;
+		string? environmentName ;
+		long? authorizationExpiration ;
+	}
+
+    record CustomCategory {
+		long id;
+		string name;
+		int order;
+		array<CustomCategory> childCategories;
+	}
+	
+	record MarketplaceStore {
+		string name;
+	    array<CustomCategory>? categories;
+	}
+	
+	record InitAuthorization {
+		//Only used if marketplace web-auth flow supports it
+		string? returnURL ;
+		string? cancelURL ;
+		string? environmentName ;
+		string? userMarketplaceId ;
+	}
+
+	record InitAuthorizationSucceeded {
+		string redirectURL;
+		string authId; //A unique identifier for the authorization
+
+		/*
+		 * Any extra credentials needed to proceed with the auth
+		 */
+	    Credential? cred ;
+	}
+	
+
+	record InitAuthorizationFailed {
+		//Only used if marketplace web-auth flow supports it
+		string? environmentName ;
+		string? userMarketplaceId ;
+		array<Error> errors;
+	}
+
+	record CompleteAuthorization {
+		string authId;
+		//any extra credentials needed to complete the process
+		Credential? cred ;
+	}
+
+	record  CompleteAuthorizationSucceeded  {
+		string authId;
+		string xAccountId;
+		string? userMarketplaceId ;
+	    long? authorizationExpiration ;
+	}
+
+
+	record CompleteAuthorizationFailed {
+		string? authId ;
+		//any extra credentials needed to complete the process
+		Credential? cred ;
+		array<Error> errors;
+	}
+	
+	record LookupStore {
+		string? xAccountId;
+		string? userMarketplaceId;
+		string? siteCode;
+		string? environmentName;
+	}
+
+	record LookupStoreSucceeded {
+		MarketplaceStore store;
+		string userMarketplaceId;
+		string siteCode;
+		string environmentName;
+		string marketplace;
+	}
+
+	record LookupStoreFailed {
+		string? xAccountId;
+		string? userMarketplaceId;
+		string siteCode;
+		string environmentName;
+		string marketplace;
+		array<Error> errors;
+	}
+    
+	record GetAllAuthorizedAccount {
+	}
+
+	record GetAllAuthorizedAccountSucceeded {
+		array<MarketplaceAccount> accounts;
+	}
+	
+	record GetAllAuthorizedAccountFailed {
+		array<Error> errors;
+	}
+	
+	record RevokeAuthorization {
+		string xAccountId;
+	}
+
+	record RevokeAuthorizationSucceeded {
+		string xAccountId;
+	}
+	
+	record RevokeAuthorizationFailed {
+		string xAccountId;
+		array<Error> errors;
+	}
+    record MarketplaceOffer{
+		OfferChannelData channelData;
+		MarketplaceOfferDetails offerDetails;		
+	}
+	
+	record MarketplacePolicyGroupData {
+		string xAccountId;
+		PolicyGroupData policyGroupData;
+	}
+	
+	record MarketplacePolicyGroup{
+		string xAccountId;
+		PolicyGroup policyGroup;
+	}
+	  record MarketplaceSiteMetadata extends SiteMetadata{
+		array<SupportedCountry> countries;
+		array<Environment> environments;
+		string marketplace;
+	}
+    
+    record MarketplaceOfferDetails extends OfferDetails {
+		string? title;
+
+		/*
+			Following are fields that are optionally supported
+			across marketplaces.  Will be ignored if market does
+			not support this.
+		*/
+		string? subTitle;
+		boolean? giftWrapAvailable;
+		//Indicates where in the marketplace category to list
+		array<string>? marketCategories;
+		//Indicates where in the seller custom categories to list
+		array<string>? customCategories;
+
+		//Following data can override data in a specified profile
+		PaymentPolicy? payment;
+		ShippingPolicy? shipping;
+	    ReturnPolicy? returnPolicy;
+	}
+	
+	record LookupMarketplaceSiteMetadataSucceeded {  
+		array<MarketplaceSiteMetadata> siteMetadata
+		string? environmentName
+	}
+	record LookupMarketplacePolicyGroupSucceeded {
+		MarketplacePolicyGroup p;
+	}
+		record CreateMarketplacePolicyGroup {
+		MarketplacePolicyGroupData p; 
+	}
+
+	record CreateMarketplacePolicyGroupSucceeded {   
+		MarketplacePolicyGroup p; //id is filled in
+	}
+	
+	record CreateMarketplacePolicyGroupFailed {
+		MarketplacePolicyGroupData p;
+		array<Error> errors;
+	}
+	
+	
+	record UpdateMarketplacePolicyGroup {
+		MarketplacePolicyGroup p; //idd must be filled in
+	}
+
+	record UpdateMarketplacePolicyGroupSucceeded {
+		MarketplacePolicyGroup p;
+	}
+
+	record UpdateMarketplacePolicyGroupFailed {
+		MarketplacePolicyGroup p;
+		array<Error> errors;
+	}
+	
+	record PublishMarketplaceOffer {
+		MarketplaceOfferDetails offer; 
+		string? policyGroupId;
+	}
+
+	record PublishMarketplaceOfferSucceeded { //Does not map 1:1 with request message - need to model this
+		MarketplaceOffer offer;
+		string? policyGroupId;
+	}
+	
+	record ReviseMarketplacePublishedOffer {
+		MarketplaceOfferDetails update; 
+		string? policyGroupId;
+	}
+
+	record ReviseMarketplacePublishedOfferSucceeded {
+		MarketplaceOffer updatedOffer; 
+		string? policyGroupId;
+	}
+	
+	record MarketplaceOfferPublished {
+		MarketplaceOffer offer;
+		string? policyGroupId;
+	}
+	record SearchMarketplaceOfferSucceeded{	
+		array<MarketplaceOffer>	offers;
+		datetime? startTime;
+		datetime? endTime;
+	}
+}

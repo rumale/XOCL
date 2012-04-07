@@ -1,0 +1,252 @@
+package com.x.saleschannel.v1{
+	
+	import com.x.saleschannel.v1.*
+	import com.x.marketplace.v1.*
+	
+	
+
+	process SalesChannelSetup<Marketplace>
+	{
+		description "A consumer queries one sales channel, gets sites and metadata back"
+
+		roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider, AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+	}
+	
+	workflow SalesChannelSetup implements SalesChannelSetup
+	{		
+		any{
+			all{
+				any{
+			 		transaction SearchAvailableChannels
+					{
+						roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+					}
+				}
+				any{
+					transaction SearchSite  //goes to a specific destination
+					{
+						roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+					}	
+				}
+				any{
+					transaction LookupSiteMetadata<Marketplace>
+					{
+						roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+					}	
+				}
+				any{
+					transaction SearchCategory //A consumer searches site for available categories
+					{
+						roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+					}
+				}	
+			}
+			all<Marketplace>{
+				workflow AuthorizationGrant{
+					roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+				}
+			}	
+		}
+		
+		
+	}
+	
+	
+    process PolicyGroupCreation<Marketplace> (PolicyGroup policyGroup)
+	{
+		description "A merchant creates a policy group"
+		
+		roles(SalesChannelMerchantConsole, SalesChannelPolicyManager, SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+		
+		preconditions(policyGroup[PolicyGroup.New])
+	
+		workflow 
+		{
+			any{
+				
+				workflow SalesChannelSetup
+				{
+					roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
+				}
+			}
+				// A consumer asks the PIM to create a product
+		     transaction CreatePolicyGroup<Marketplace>
+			 {
+				   roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+			}
+		}
+
+	    postconditions
+		{
+			success(product[PolicyGroup.Created])
+			failure(product[PolicyGroup.New])
+		}
+	}	
+	
+    process PolicyGroupUpdate<Marketplace> (PolicyGroup policyGroup)
+	{
+		description "A merchant updates a policy group"
+		
+		roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+		
+		preconditions(policyGroup[PolicyGroup.Created])
+	
+		workflow 
+		{
+		     transaction UpdatePolicyGroup<Marketplace>
+			 {
+				  roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+			}
+		}
+
+	    postconditions
+		{
+			success(product[PolicyGroup.Created])
+		}
+	}
+	
+		
+    process PolicyGroupDeletion (PolicyGroup policyGroup)
+	{
+		description "A merchant deletes a policy group"
+		
+		roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+		
+		preconditions(policyGroup[PolicyGroup.Created])
+	
+		workflow 
+		{
+			
+		     transaction DeletePolicyGroup
+			 {
+				  roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+			}
+		}
+
+	    postconditions
+		{
+			success(product[PolicyGroup.Deleted])
+		}
+	}
+	
+    process LookupPolicyGroup<Marketplace>
+	{
+		description "A merchant looks up a policy group by ID"
+		roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+	
+		workflow
+		{
+			transaction LookupPolicyGroup<Marketplace>
+			{
+				roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
+			}
+		}
+	}
+	
+	process OfferPublication<Marketplace>(Offer offer)  
+	{
+		description "A merchant publishes offers to a sales channel"
+		roles(OfferManager, SalesChannel)
+	
+		preconditions(offer[Offer.Created])
+	
+		workflow
+		{
+			transaction PublishOffer<Marketplace>
+			{
+				roles(OfferManager, SalesChannel)
+			}
+		}
+	   postconditions
+		{
+			success(offer[Offer.Active])
+		}
+		
+	}
+	
+	process OfferDeactivation(Offer offer)
+	{
+		description "A sales channel deactivates an existing offer"
+		roles (SalesChannel, OfferManager)
+		
+		preconditions(offer[Offer.Inactive])
+		workflow
+		{
+			transaction OfferDeactivated
+			{
+				roles(SalesChannel, OfferManager)
+	
+			}
+		}
+		postconditions
+		{
+			success(offer[Offer.Inactive])
+		}
+	}
+	
+	
+	process PublishedOfferRevision<Marketplace>(Offer offer)
+	{
+		
+		description "A merchant updates publishes offers in a sales channel"
+		
+		roles(OfferManager, SalesChannel)
+	
+		preconditions(offer[Offer.Active])
+	
+		workflow
+		{
+				transaction RevisePublishedOffer<Marketplace>
+				{
+					roles(OfferManager, SalesChannel)
+				}
+			
+		}
+	   postconditions
+		{
+			success(offer[Offer.Active])
+		}
+		
+	}
+	
+	process PublishedOfferRevocation(Offer offer)
+	{
+		
+		description "A merchant cancels an offer in a sales channel"
+		
+		roles(OfferManager, SalesChannel)
+	
+		preconditions(offer[Offer.Active])
+	
+		workflow
+		{
+				transaction RevokePublishedOffer
+				{
+					roles(OfferManager, SalesChannel)
+				}
+			
+		}
+	   postconditions
+		{
+			success(offer[Offer.Inactive])
+		}
+		
+	}
+	
+	process OfferSearch<Marketplace>{
+	    
+	    description "Offer Manager queries Sales Channel to reconcile offer data"
+		
+		roles( OfferManager, SalesChannel)
+		
+		workflow
+		{
+				transaction SearchOffer<Marketplace>
+				{
+						roles(OfferManager, SalesChannel)
+				}	
+		}
+		
+	}
+	
+}

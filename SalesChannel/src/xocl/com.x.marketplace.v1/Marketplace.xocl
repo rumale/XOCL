@@ -1,0 +1,77 @@
+  
+package com.x.marketplace.v1{
+	
+	import com.x.marketplace.v1.*
+	
+			
+    process AuthorizationGrant(Authorization auth)
+	{
+		description "Merchant authorizes software to act on Merchant's behalf"
+		roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+		preconditions(auth[Authorization.New])	
+	
+	    
+	    postconditions
+		{
+			success(auth[Authorization.Granted])
+			failure(auth[Authorization.Failed])
+		}
+		
+	}
+	workflow  AuthorizationGrant implements AuthorizationGrant
+		{
+			transaction InitAuthorization
+			{
+				roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+			}
+			//TODO:  timer block
+			transaction CompleteAuthorization
+			{
+				roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+			}
+		}
+	
+	
+	process StoreLookup
+	{
+		description "A merchant looks up metadata about their marketplace store"
+		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+	
+		workflow
+		{
+			transaction LookupStore
+			{
+				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+			}
+		}
+	}
+    
+    process AuthorizedAccountSearch
+	{
+		description "A merchant retrieves their account information"
+		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+	
+		workflow
+		{
+			transaction GetAllAuthorizedAccount
+			{
+				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+			}
+		}
+	}
+	process AuthorizationRevoke
+	{
+		description "A merchant disassociates their marketplace account"
+		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+	
+		workflow
+		{
+			transaction RevokeAuthorization
+			{
+				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+			}
+		}
+	}
+
+
+}

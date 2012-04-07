@@ -1,0 +1,139 @@
+ 
+package com.x.marketplace.v1{
+	import com.x.marketplace.v1.*
+	
+	entity Authorization
+    {
+    	state New[Pending, Failed]
+    	state Pending[Granted, Failed]
+    	state Granted 
+    	state Failed	
+    }
+
+    
+    transaction InitAuthorization response
+    {
+        sender
+        {
+        	message InitAuthorization
+        	{
+        		timeouts(receipt=30s, response=1m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success InitAuthorizationSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+            
+            failure InitAuthorizationFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction CompleteAuthorization response
+    {
+        sender
+        {
+        	message CompleteAuthorization
+        	{
+        		timeouts(receipt=30s, response =5m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success CompleteAuthorizationSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+            
+            failure CompleteAuthorizationFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction LookupStore query
+    {
+        sender
+        {
+        	message LookupStore
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success LookupStoreSucceeded
+        	failure LookupStoreFailed          
+         	//no failure message.  TODO:  is this OK?
+        } 
+    }
+    
+    transaction GetAllAuthorizedAccount query
+    {
+        sender
+        {
+        	message GetAllAuthorizedAccount
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success GetAllAuthorizedAccountSucceeded
+        	failure GetAllAuthorizedAccountFailed          
+         	//no failure message.  TODO:  is this OK?
+        } 
+    }
+    
+    transaction RevokeAuthorization response
+    {
+        sender
+        {
+        	message RevokeAuthorization
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success RevokeAuthorizationSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure RevokeAuthorizationFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+    
+    
+}
