@@ -1,0 +1,60 @@
+package com.x.inventory.v1
+{
+	import com.x.inventory.v1.*
+	
+	process StockItemLookup
+	{
+		description "Inventory consumer queries inventory levels and locations"	
+			
+		roles(InventoryConsumer, InventoryManager)
+		
+		workflow
+		{
+			transaction LookupStockItem
+			{
+				roles(InventoryConsumer, InventoryManager)
+			}
+		}
+	}
+	
+    process StockItemUpdate(StockItem stockItem)
+    {
+		description "The StockItem consumer updates the stock item in the inventory manager"
+		
+		roles(StockItemConsumer, InventoryManager, InventoryObserver)
+		
+		preconditions(stockItem[StockItem.Created])
+	
+		workflow
+		{
+			any
+			{
+				// Stock item consumer tells inventory manager to update stock item
+				transaction UpdateStockItem
+				{
+				   	roles(StockItemConsumer, InventoryManager)
+				}
+			}
+			
+			// Inventory manager informs inventory observer that stock item was updated
+			transaction StockItemUpdated
+			{
+				roles(InventoryManager, InventoryObserver)
+			}
+
+			any
+			{
+				// Inventory manager informs Inventory observer that item has gone out of stock
+				transaction OutOfStock  
+				{
+					roles(InventoryManager, InventoryObserver)
+				}
+			}
+		}
+		
+		postconditions
+		{
+			success(stockItem[StockItem.Created])
+		}
+	}
+}

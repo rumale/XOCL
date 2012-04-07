@@ -1,0 +1,63 @@
+package com.x.inventory.v1
+{
+	import com.x.core.v1.*
+	
+    record StockItem 
+	{
+		string sku;
+		int quantity;  // note: quantity is a high consistency field due to serialization issues.
+		string locationName; // reference to location based on unique name
+	}
+	
+	record LookupStockItem
+	{
+		array<string> skus;
+	}
+
+	record LookupStockItemSucceeded
+	{
+		array<StockItem> stockItems;
+	}
+	
+	record LookupStockItemFailed
+	{
+		array<InventoryLookupError> errors;
+	}
+	
+	record InventoryLookupError
+	{
+		string? sku;
+		array<Error> errors;
+	}
+	
+	record UpdateStockItem
+	{
+		array<StockItem> stockItems;
+	}
+	
+	record UpdateStockItemSucceeded
+	{
+		array<StockItem> stockItems;
+	}
+	
+	record UpdateStockItemFailed
+	{
+		array<UpdateStockItemError> errors;
+	}
+
+	record UpdateStockItemError
+	{
+		StockItem? stockItem;
+		array<Error> errors;
+	}
+
+    record StockItemUpdated
+	{
+		array<StockItem> stockItems;
+	}
+
+    record OutOfStock
+	{
+		StockItem stockItem;
+	}
+}

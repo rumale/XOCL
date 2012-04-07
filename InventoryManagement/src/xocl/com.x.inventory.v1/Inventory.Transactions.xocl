@@ -1,0 +1,78 @@
+package com.x.inventory.v1
+{
+	import com.x.inventory.v1.*
+	
+	entity StockItem
+	{
+    	state New[Created]
+    	state Created[Deleted]
+    	state Deleted	
+    }
+	
+	transaction LookupStockItem query
+    {
+        sender
+        {
+        	message LookupStockItem
+        	{
+        		timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	
+			// A success message does not have a response timeout
+        	success LookupStockItemSucceeded
+            
+			// A failure message does not have a response timeout
+            failure LookupStockItemFailed
+        }
+    }
+    
+	transaction StockItemUpdated inform
+    {
+		sender
+		{
+			message StockItemUpdated
+		}
+	}
+	
+	transaction OutOfStock inform
+    {
+		sender
+		{
+			message OutOfStock
+		}
+	}
+	
+    transaction UpdateStockItem response
+    {
+        sender
+        {
+        	message UpdateStockItem
+        	{
+        		timeouts(receipt=30s,  response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success UpdateStockItemSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure UpdateStockItemFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+}
