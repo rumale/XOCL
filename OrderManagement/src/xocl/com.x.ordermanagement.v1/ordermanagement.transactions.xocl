@@ -1,0 +1,104 @@
+/** This file includes the transactions that are part of the
+ *  order management domain
+ */
+package com.x.ordermanagement.v1
+{
+	import com.x.ordermanagement.v1.*
+	
+	// Tell an order processor to process an order 
+	transaction ProcessOrder response
+	{
+		sender
+		{
+			message ProcessOrder
+			{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+		}
+		
+		receiver
+		{
+			success ProcessOrderSucceeded
+			{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+			failure ProcessOrderFailed
+		}
+	}
+	
+	// Update the shipping tracking information for an order
+	transaction OrderShipped<SalesChannelOrder> notify
+	{
+		sender
+		{
+			message OrderShipped
+			{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            message<SalesChannelOrder> SalesChannelOrderShipped
+			{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+		}		
+	}
+    
+    // Inform observers that an order was created
+    transaction OrderCreated<SalesChannelOrder> inform
+    {
+        sender
+        {
+        	message OrderCreated
+        	message<SalesChannelOrder> SalesChannelOrderCreated
+        }
+    }
+    
+    // Cancel the content of an order
+	transaction CancelOrder<SalesChannelOrder>(Order order) response
+    {
+        sender
+        {
+        	message CancelOrder
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        	message<SalesChannelOrder> CancelSalesChannelOrder
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	success CancelOrderSucceeded
+        	{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }            
+        	success<SalesChannelOrder> CancelSalesChannelOrderSucceeded
+        	{
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }            
+            failure CancelOrderFailed
+            failure<SalesChannelOrder> CancelSalesChannelOrderFailed
+        }
+		postconditions
+		{
+			success(order[Order.Cancelled])
+		}
+    }
+    
+    // Inform observers that an order was cancelled
+    transaction OrderCancelled inform
+    {
+        sender
+        {
+        	message OrderCancelled
+        }
+    }
+}
