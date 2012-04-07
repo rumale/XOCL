@@ -1,0 +1,22 @@
+
+package com.x.core.v1
+{
+	import com.x.core.v1.*
+	
+	enum ContactAddressType
+	{
+		BILLING,
+		SHIPPING,
+		BILLING_AND_SHIPPING
+	}
+
+	record Contact 
+	{
+		Name fullName	   
+	    array<Address>? addresses = null
+		Phone? primaryPhone = null
+	    array<Phone>? additionalPhones = null
+		Email? emailAddress = null
+		ContactAddressType? addressType = null
+	}
+}

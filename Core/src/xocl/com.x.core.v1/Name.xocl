@@ -1,0 +1,12 @@
+
+package com.x.core.v1
+{
+	record Name
+	{
+		string firstName
+		string? middleName = null
+		string lastName
+		string? prefix = null
+		string? suffix = null
+	}
+}

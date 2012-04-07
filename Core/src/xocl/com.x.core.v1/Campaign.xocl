@@ -1,0 +1,29 @@
+
+package com.x.core.v1
+{
+	enum CampaignStatus
+	{
+		DRAFT,
+		SCHEDULED,
+		EXECUTING,
+		COMPLETED
+	}
+
+	record Campaign
+	{
+		string? id = null
+
+		/** The account this campaign belongs to */
+		string accountId
+		
+		string name
+		string? _avdl_description = null
+
+		/** Date Time Format: ISO 8601 */
+		 string? startTime = null
+		 string? endTime = null
+		
+		/** Provider specific types can be specified as strings */
+		union{CampaignStatus,string} status
+	}	
+}

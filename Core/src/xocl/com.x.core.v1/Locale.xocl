@@ -1,0 +1,13 @@
+package com.x.core.v1
+{
+	record Locale
+	{
+		/* ISO 639-2 Two-letter lower-cased language code */
+		string language;
+		
+		/* ISO 3166 Two-letter UPPER-CASED country code */
+		string country;
+		
+        string? variant;		
+	}
+}

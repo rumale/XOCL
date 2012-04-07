@@ -1,0 +1,18 @@
+
+package com.x.core.v1
+{
+	enum PhoneType
+	{
+		HOME,
+		MOBILE,
+		WORK,
+		FAX,
+		UNKNOWN
+	}
+
+	record Phone
+	{
+		string number
+		PhoneType type
+	}
+}

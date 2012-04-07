@@ -1,0 +1,122 @@
+package com.x.core.v1
+{
+	/* Note:
+	 * This common query object leaves lots of room for interpretation. 
+	 * It is intended for client/server interactions and not as the start of a business process.
+	 */
+	
+	/**
+	 * Operator
+	 */
+	enum Operator
+	{
+		EQUALS,
+		NOT_EQUALS,
+		GREATER_THAN,
+		GREATER_THAN_EQUALS,
+		LESS_THAN,
+		LESS_THAN_EQUALS
+	}
+	
+	/**
+	 * Predicate
+	 */
+	record Predicate
+	{
+		string field;
+
+		Operator operator;
+
+		array<string> values;
+	}
+
+	/**
+	 * Sort order
+	 */
+	enum SortOrder
+	{
+		ASCENDING,
+		DESCENDING
+	}
+
+	/**
+	 * Order by
+	 */
+	record OrderBy
+	{
+		string field;
+
+		SortOrder sortOrder;
+	}
+
+	/**
+	 * Query that corresponds to the report
+	 */
+	record Query
+	{
+		/**
+		 * Fields to be selected. These will be 'columns' in the report.
+		 * When not specified, the entire object should be returned. 
+		 */
+		array<string>? fields;
+		
+		/**
+		 * Specifies how an entity should be filtered. Essentially, the WHERE
+		 * clause.  Don't specify any predicate if the query is for all.
+		 */
+		array<Predicate>? predicates;
+
+		/**
+		 * Fields on which the report should be sorted. The order is significant -
+		 * first field determines primary sort order, the next determines
+		 * secondary sort order, etc.
+		 */
+		array<OrderBy> ordering;
+		
+		/**
+		 * Restrict the number of items return to this many or less.
+		 * When null, it is assumed there is no restriction
+		 */
+		long? numberItems;
+		
+		/**
+		 * Return the results starting from this zero-based index.
+		 * When null, items will be returned started from the first item
+		 */
+		long? startItemIndex;
+		
+		/**
+		 * The total number of items found by the data provider.
+		 * This field will be filled in by the result provider when supported.
+		 * Requester should not fill this out.
+		 */
+		 long? numberItemsFound;
+	}
+
+	record GenericItem
+	{
+		//Fixed is not supported. Use bytes instead.
+		//For union, the actual type should be use instead of the union type.
+		union {null,boolean,int,long,float,double,string,bytes,array<GenericItem>,map<GenericItem>} value;
+	}
+
+	record QueryResultItem
+	{
+		array<GenericItem> fields;
+	}
+
+	/**
+	 * Query Result
+	 * The result of a query can be null, in which case the Error structure
+	 * will indicate the error.
+	 * In the successful case, the result is zero or more rows, each containing
+	 * one or more columns. The order of the columns would correspond to the
+	 * order of the fields in the Query record.
+	 * While the type of column supported is a string now, this can be enhanced
+	 * by adding additional types to the inner union.
+	 */
+	record QueryResult
+	{
+	   array<QueryResultItem>? data;
+	}
+}
