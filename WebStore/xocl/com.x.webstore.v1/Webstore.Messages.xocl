@@ -1,0 +1,102 @@
+package com.x.webstore.v1{
+	
+	import com.x.core.v1.*
+
+    enum ContactStatus {
+		UNCONFIRMED,
+		ACTIVE,
+		UNSUBSCRIBED
+	}
+	
+	
+    record WebStore{
+    	string webStoreName;
+    	string webStoreId;
+		string language;
+		string currencyCode;
+		string url;
+	}
+	
+	
+	record WebStoreOffer{
+		string url;
+		CurrencyAmount currentPrice;
+		long quantity;
+		string sku;
+		string? webStoreName;
+		string webStoreCode;
+	}
+	
+	enum CustomerAddressType {
+		BILLING,
+		SHIPPING,
+		BILLING_AND_SHIPPING
+	}
+
+
+	
+	    
+    record GetAllWebStoreProvider {
+
+	}
+	
+    record GetAllWebStoreProviderSucceeded {
+		string providerName;
+		 //Caller must get destination ID from header - X-XC-PUBLISHER-ID
+	}
+	
+	record GetAllWebStore {
+	}
+	
+    record GetAllWebStoreSucceeded {
+		string providerName;
+	    //Caller must get destination ID from header - X-XC-PUBLISHER-ID
+	    array<WebStore> stores;
+	}
+	
+	
+	record GetAllWebStoreFailed {
+		string providerName;
+	    array<Error> errors;
+	}
+	
+	
+	record SearchWebStoreOffer{
+    	string? webStoreName;
+    	string? webStoreId;
+		
+		/* When this field is present, get all customers modified since this date that also match the other criteria */
+		datetime? modifiedSince;
+		
+		/**
+		 * Restrict the number of items return to this many or less.
+		 * When null, it is assumed there is no restriction
+		 */
+		long? itemsRequested;
+		
+		/**
+		 * Return the results starting from this zero-based index.
+		 * When null, items will be returned started from the first item
+		 */
+		long? startItemIndex;
+	}
+	
+	record SearchWebStoreOfferSucceeded{	
+		array<WebStoreOffer> webStoreOffers;
+		datetime? modifiedSince;
+	 	long totalItemsFound;
+		long? itemsRequested;
+		long? startItemIndex;
+		
+	}
+	
+	record SearchWebStoreOfferFailed{
+		datetime? modifiedSince;
+		long? itemsRequested;
+		long? startItemIndex;
+		array<Error> errors;
+	}
+	
+
+	
+}

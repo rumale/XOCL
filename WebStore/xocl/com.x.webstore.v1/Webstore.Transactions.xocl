@@ -1,0 +1,68 @@
+package com.x.webstore.v1{
+	
+	import com.x.webstore.v1.*
+	
+
+    
+    transaction GetAllWebStoreProvider  query //broadcast
+    {
+        sender
+        {
+        	message GetAllWebStoreProvider 
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+         	// A success message does not have a response timeout
+        	success GetAllWebStoreProviderSucceeded        
+                    	
+        } 
+    }
+        
+    transaction GetAllWebStore  query 
+    {
+        sender
+        {
+        	message GetAllWebStore
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+         	// A success message does not have a response timeout
+        	success GetAllWebStoreSucceeded        
+                    	
+        	// A failure message does not have a response timeout
+            failure GetAllWebStoreFailed  
+        } 
+    }
+    
+
+    transaction SearchWebStoreOffer query 
+    {
+        sender
+        {
+        	message SearchWebStoreOffer
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+         	// A success message does not have a response timeout
+        	success SearchWebStoreOfferSucceeded        
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchWebStoreOfferFailed  
+        } 
+    }
+	
+
+
+}
