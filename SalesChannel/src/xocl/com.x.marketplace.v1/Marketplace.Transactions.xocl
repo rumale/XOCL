@@ -18,23 +18,19 @@ package com.x.marketplace.v1{
         	message InitAuthorization
         	{
         		timeouts(receipt=30s, response=1m)     		
-        		// How many times should we retry if one of the timeouts expires? 
         		retries=3
         	}
         }
         receiver
         {
-        	// One of these two messages must be sent back to the sender as a response
         	success InitAuthorizationSucceeded
         	{
-				// A success message does not have a response timeout
             	timeouts(receipt=30s)
             	retries=3
             }
             
             failure InitAuthorizationFailed
             {
-				// A failure message does not have a response timeout
             	timeouts(receipt=30s)
             	retries=3
             }
@@ -48,23 +44,19 @@ package com.x.marketplace.v1{
         	message CompleteAuthorization
         	{
         		timeouts(receipt=30s, response =5m)     		
-        		// How many times should we retry if one of the timeouts expires? 
         		retries=3
         	}
         }
         receiver
         {
-        	// One of these two messages must be sent back to the sender as a response
         	success CompleteAuthorizationSucceeded
         	{
-				// A success message does not have a response timeout
             	timeouts(receipt=30s)
             	retries=3
             }
             
             failure CompleteAuthorizationFailed
             {
-				// A failure message does not have a response timeout
             	timeouts(receipt=30s)
             	retries=3
             }
@@ -84,7 +76,6 @@ package com.x.marketplace.v1{
         {
         	success LookupStoreSucceeded
         	failure LookupStoreFailed          
-         	//no failure message.  TODO:  is this OK?
         } 
     }
     
@@ -101,7 +92,6 @@ package com.x.marketplace.v1{
         {
         	success GetAllAuthorizedAccountSucceeded
         	failure GetAllAuthorizedAccountFailed          
-         	//no failure message.  TODO:  is this OK?
         } 
     }
     
@@ -112,23 +102,19 @@ package com.x.marketplace.v1{
         	message RevokeAuthorization
         	{
         		timeouts(receipt=30s, response=3m)     		
-        		// How many times should we retry if one of the timeouts expires? 
         		retries=3
         	}
         }
         receiver
         {
-        	// One of these two messages must be sent back to the sender as a response
         	success RevokeAuthorizationSucceeded
         	{
-				// A success message does not have a response timeout
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }
             
             failure RevokeAuthorizationFailed
             {
-				// A failure message does not have a response timeout
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }

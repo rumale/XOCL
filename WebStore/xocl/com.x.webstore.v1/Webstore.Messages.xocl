@@ -24,7 +24,7 @@ package com.x.webstore.v1{
 		long quantity;
 		string sku;
 		string? webStoreName;
-		string webStoreCode;
+		string webStoreId;
 	}
 	
 	enum CustomerAddressType {
@@ -83,18 +83,12 @@ package com.x.webstore.v1{
 	
 	record SearchWebStoreOfferSucceeded{	
 		array<WebStoreOffer> webStoreOffers;
-		datetime? modifiedSince;
-	 	long totalItemsFound;
-		long? itemsRequested;
-		long? startItemIndex;
-		
+		SearchWebStoreOffer request;
 	}
 	
 	record SearchWebStoreOfferFailed{
-		datetime? modifiedSince;
-		long? itemsRequested;
-		long? startItemIndex;
 		array<Error> errors;
+		SearchWebStoreOffer request;
 	}
 	
 
