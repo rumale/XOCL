@@ -15,9 +15,9 @@ package com.x.webstore.v1{
         }
         receiver
         {
-        	// One of these two messages must be sent back to the sender as a response	
-         	// A success message does not have a response timeout
         	success GetAllWebStoreProviderSucceeded        
+        	
+        	//No failure message in this case.  If the capability cannot give provider information, it should not return anything.  
                     	
         } 
     }
