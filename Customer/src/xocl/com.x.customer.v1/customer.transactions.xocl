@@ -40,4 +40,27 @@ package com.x.customer.v1{
         }
     }
     
+	transaction SearchCustomer<Email> query
+    {
+        sender
+        {
+        	message SearchCustomer
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	
+        	success SearchCustomerSucceeded
+        	
+        	success<Email> SearchEmailCustomerSucceeded         
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchCustomerFailed
+        } 
+    }
+    
+    
+    
 }

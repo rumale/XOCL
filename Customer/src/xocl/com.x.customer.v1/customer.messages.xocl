@@ -19,7 +19,7 @@ package com.x.customer.v1{
 	}
 	
 	record CustomerData {  //TODO: Security annotations here.
-		Name fullName;	   
+		Name fullName;	         
 	    array<Address>? addresses;
 		Phone? primaryPhone;
 		string emailAddress; 
@@ -67,26 +67,7 @@ package com.x.customer.v1{
 		 long? startItemIndex;
 	}
 	
-	transaction SearchCustomer<Email> query
-    {
-        sender
-        {
-        	message SearchCustomer
-        	{
-        		 timeouts(response=30s)     		
-        	}
-        }
-        receiver
-        {
-        	
-        	success SearchCustomerSucceeded
-        	
-        	success<Email> SearchEmailCustomerSucceeded         
-                    	
-        	// A failure message does not have a response timeout
-            failure SearchCustomerFailed
-        } 
-    }
+
     
     record CustomerEmail{
 		
