@@ -128,7 +128,7 @@ package com.x.saleschannel.v1{
 		}
 	}
 	
-    process LookupPolicyGroup<Marketplace>
+    process PolicyGroupLookup<Marketplace>
 	{
 		description "A merchant looks up a policy group by ID"
 		roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)
