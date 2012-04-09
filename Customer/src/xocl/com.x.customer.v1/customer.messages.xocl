@@ -22,7 +22,7 @@ package com.x.customer.v1{
 		Name fullName;	         
 	    array<Address>? addresses;
 		Phone? primaryPhone;
-		string emailAddress; 
+		Email email; 
 		Gender? gender;
 		datetime? dateOfBirth;
 		string? company;
@@ -71,7 +71,7 @@ package com.x.customer.v1{
     
     record CustomerEmail{
 		
-		string emailAddress;
+		Email email;
 		
 		datetime lastModifiedDate;
 		
