@@ -1,0 +1,33 @@
+package com.x.marketplace.v1{
+	import com.x.saleschannel.v1.*
+	import com.x.marketplace.v1.*
+	
+    contract Marketplace 
+    {
+    	description "An adapter to a sales channel that is an online marketplace, such as eBay"
+    	
+    	roles
+    	{
+    		//sales channel roles 
+	   		SalesChannelSetup.SalesChannelMetadataProvider
+	   		PolicyGroupCreation.SalesChannelPolicyManager<Marketplace>
+	   		PolicyGroupUpdate.SalesChannelPolicyManager<Marketplace> 
+	   		PolicyGroupDeletion.SalesChannelPolicyManager<Marketplace> 
+	   		PolicyGroupLookup.SalesChannelPolicyManager<Marketplace> 
+	   		OfferPublication.SalesChannel<Marketplace> 
+	   		OfferDeactivation.SalesChannel
+	   		PublishedOfferRevision.SalesChannel<Marketplace>
+	   		PublishedOfferRevocation.SalesChannel<Marketplace>
+	   		OfferSearch.SalesChannel<Marketplace>
+	   		
+	   		//Marketplace specific roles
+	   		AuthorizationGrant.MarketplaceSalesChannel
+	   		StoreLookup.MarketplaceSalesChannelMetadataProvider
+	   		AuthorizedAccountSearch.MarketplaceSalesChannelMetadataProvider
+	   		AuthorizationRevoke.MarketplaceSalesChannelMetadataProvider
+	   		
+	    }
+	    
+	 }
+	
+}
