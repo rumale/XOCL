@@ -4,7 +4,7 @@ package com.x.webstore.v1{
 	
 
     
-    transaction GetAllWebStoreProvider  query //broadcast
+    transaction GetAllWebStoreProvider broadcast query 
     {
         sender
         {
