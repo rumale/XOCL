@@ -3,9 +3,9 @@
  * By convention, entities and transactions for a domain reside in the file <domain>.Transactions.xocl
  */
 
-package com.x.xocl.example.v1
+package com.x.example.v1
 {	
-	import com.x.xocl.example.v1.* 
+	import com.x.example.v1.* 
 	
  	/*
  	 * The identity and lifecycle of an entity are shared but its structure is private. 

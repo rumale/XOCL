@@ -9,7 +9,7 @@
  * A package name must be a dot delimited path that ends in a version indicator.
  * A version indicator consists of the letter 'v' followed by an integer valued version number.
  */
-package com.x.xocl.example.v1
+package com.x.example.v1
 {
 	/*
 	 * An import brings in definitions from another package, or from the same package in other files.

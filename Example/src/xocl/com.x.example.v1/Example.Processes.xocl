@@ -7,9 +7,9 @@
  * One AVDL file is generated for every package that contains a workflow.
  * The package name becomes the namespace for the AVDL file.
  */
-package com.x.xocl.example.v1
+package com.x.example.v1
 {	
-	import com.x.xocl.example.v1.*
+	import com.x.example.v1.*
 	
     // A process is a distributed activity with a goal
     // A process can have parameters

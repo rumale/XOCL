@@ -3,9 +3,9 @@
  * By convention, contracts for a domain reside in the file <domain>.Contracts.xocl
  */
 
-package com.x.xocl.example.v1
+package com.x.example.v1
 {	
-	import com.x.xocl.example.v1.*
+	import com.x.example.v1.*
 	
 	// A contract can be implemented by a partner
     contract OutsourceOrderManager 
