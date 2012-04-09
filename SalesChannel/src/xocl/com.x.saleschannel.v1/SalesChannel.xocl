@@ -17,7 +17,7 @@ package com.x.saleschannel.v1{
 		any{
 			all{
 				any{
-			 		transaction SearchAvailableChannels
+			 		transaction GetAllAvailableChannel
 					{
 						roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
 					}
@@ -69,7 +69,6 @@ package com.x.saleschannel.v1{
 					roles(SalesChannelMetadataConsumer, SalesChannelMetadataProvider)
 				}
 			}
-				// A consumer asks the PIM to create a product
 		     transaction CreatePolicyGroup<Marketplace>
 			 {
 				   roles(SalesChannelMerchantConsole, SalesChannelPolicyManager)

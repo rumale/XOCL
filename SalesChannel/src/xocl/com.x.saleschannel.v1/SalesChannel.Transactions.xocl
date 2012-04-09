@@ -21,19 +21,20 @@
     	state Inactive
     }
     
-    transaction SearchAvailableChannels broadcast query
+    transaction GetAllAvailableChannel broadcast query
     {
         sender
         {
-        	message SearchAvailableChannels //BROADCAST
+        	message GetAllAvailableChannel 
         	{
-        		 timeouts(response=30s)     		
+        		 timeouts(response=30s)
+        		 //In a broadcast query, the client should wait for the entire timeout before assuming all available channels have responded     		
         	}
         }
         receiver
         {
-        	success SearchAvailableChannelsSucceeded           
-         	//no failure message.  TODO:  is this OK?
+        	success GetAllAvailableChannelSucceeded                 	
+        	//No failure message in this case.  If the reciever cannot give channel/provider information, it should not return anything.  
         } 
     }
     

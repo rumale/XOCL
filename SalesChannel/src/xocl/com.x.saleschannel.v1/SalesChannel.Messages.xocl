@@ -230,11 +230,11 @@ package com.x.saleschannel.v1{
 		array<Error> errors;
 	}
 
-	record SearchAvailableChannels {
+	record GetAllAvailableChannel {
 
 	}
 	
-    record SearchAvailableChannelsSucceeded {
+    record GetAllAvailableChannelSucceeded {
 		string channelName;
 		string channelProviderName;
 	    //Caller must get destination ID from header - X-XC-PUBLISHER-ID
