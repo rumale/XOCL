@@ -1,6 +1,7 @@
 package com.x.marketplace.v1{
 	import com.x.saleschannel.v1.*
 	import com.x.marketplace.v1.*
+	import com.x.ordermanagement.v1.*
 	
     contract Marketplace 
     {
@@ -25,6 +26,9 @@ package com.x.marketplace.v1{
 	   		StoreLookup.MarketplaceSalesChannelMetadataProvider
 	   		AuthorizedAccountSearch.MarketplaceSalesChannelMetadataProvider
 	   		AuthorizationRevoke.MarketplaceSalesChannelMetadataProvider
+	   
+	   		//Order roles
+	   		ProcessSalesChannelOrder.SalesChannel<SalesChannelOrder> 
 	   		
 	    }
 	    

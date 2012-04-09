@@ -101,4 +101,23 @@ package com.x.ordermanagement.v1
         	message OrderCancelled
         }
     }
+      
+    transaction SearchOrder<NonSensitive> query
+    {
+        sender
+        {
+        	message SearchOrder
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success SearchOrderSucceeded   
+        	success<NonSensitive> SearchNonSensitiveOrderSucceeded           
+                    	        
+            failure SearchOrderFailed
+        } 
+    }
+    
 }

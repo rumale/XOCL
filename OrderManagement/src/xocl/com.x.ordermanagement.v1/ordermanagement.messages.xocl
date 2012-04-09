@@ -141,7 +141,8 @@ package com.x.ordermanagement.v1 {
 
 		OrderStatus status
 		OrderLinePrice price
-		
+			
+		//TODO dates?
 		string? dateCancelled = null
 		string? dateDelivered = null
 		string? dateShipped = null
@@ -201,10 +202,8 @@ package com.x.ordermanagement.v1 {
 		array<SimpleOrderLineData> orderLines
 	}
 	
-	record OrderData extends OrderDetails
+	record OrderData extends NonSensitiveOrderData
 	{
-		array<OrderLineData> orderLines
-		
 		CustomerInfo customer
 		Address billingAddress
 		
@@ -214,9 +213,19 @@ package com.x.ordermanagement.v1 {
 		ShipTo destination
 		
 		string? purchaseOrder = null
+	}
+	
+	
+	record NonSensitiveOrderData extends OrderDetails
+	{
+		array<OrderLineData> orderLines
 		
 		/** The marketing source that referred this order */
 		string? referralSource = null
+	}
+	
+	record NonSensitiveOrder extends NonSensitiveOrderData{
+		string id
 	}
 	
 	record Order extends OrderData 
@@ -335,6 +344,23 @@ package com.x.ordermanagement.v1 {
 	record OrderCancelled 
 	{
 		array<SimpleOrder> cancelledOrders
+	}
+	
+    record SearchOrder{
+		datetime? lastUpdated;
+	}	
+
+	record SearchOrderSucceeded{
+		array<Order> orders;	
+		SearchOrder search;
+	}	
+	record SearchNonSensitiveOrderSucceeded{
+        array<NonSensitiveOrder> orders;		
+		SearchOrder search;
+	}
+	record SearchOrderFailed{
+		SearchOrder search;
+		array<Error> errors;
 	}
 
 }
