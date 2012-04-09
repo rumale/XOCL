@@ -1,0 +1,39 @@
+/*
+ * This file contains a sample of the X.commerce Open Commerce Language (XOCL).
+ * By convention, contracts for a domain reside in the file <domain>.Contracts.xocl
+ */
+
+package com.x.xocl.example.v1
+{	
+	import com.x.xocl.example.v1.*
+	
+	// A contract can be implemented by a partner
+    contract OutsourceOrderManager 
+    {
+    	// A description defines the purpose of the contract
+    	description "A company that outsources all order fulfillment functions"
+    	
+    	// A set of roles collectivley define the implementer's responsibilities
+    	roles
+    	{
+	        FulfillOrder.OrderManager
+	        FulfillOrder.OfferManager
+	    }
+    }
+    
+    // This contract extends the previous one
+    contract InHouseOrderManager extends OutsourceOrderManager
+    {
+    	description "A company that performs all order fulfillment functions"
+    	roles
+    	{
+    		// A role may be qualified by variants
+	        FulfillOrder.OrderFulfiller<variant1>
+	        FulfillOrder.InventoryManager<variant2>
+	        FulfillOrder.WarehouseManager<variant2>
+	        
+	        // A contract may use multiple processes
+	        ShipOrder.ShippingManager(DropShipOrder)
+        }
+    }
+}

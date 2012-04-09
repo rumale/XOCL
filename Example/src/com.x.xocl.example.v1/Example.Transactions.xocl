@@ -1,0 +1,301 @@
+/*
+ * This file contains a sample of the X.commerce Open Commerce Language (XOCL).
+ * By convention, entities and transactions for a domain reside in the file <domain>.Transactions.xocl
+ */
+
+package com.x.xocl.example.v1
+{	
+	import com.x.xocl.example.v1.* 
+	
+ 	/*
+ 	 * The identity and lifecycle of an entity are shared but its structure is private. 
+ 	 * Information about the entity is communicated by messages.
+ 	 */
+    entity Order
+    {
+    	/*
+    	 * An entity may have an optional state machine that defines its leficycle.
+    	 * Each state has a name and an optional list of valid transitions to other states.
+    	 * An entity is created in the first state listed, which is Created by convention.
+    	 */
+        state Created[Prepared, Cancelled] // A Created Order can be Prepared or Cancelled.        
+        state Prepared[Shipped, Cancelled] // A Prepared Order can be Shipped or Cancelled.
+        state Shipped[Delivered, Returned] // A Shipped Order can be Delivered or Returned.
+        state Delivered[Returned, Completed] // A Delivered Order can be Returned or Completed.
+        state Returned[Returned] // A Returned Order can be Cancelled.
+        state Cancelled // A Cancelled Order cannot be processed any further.
+        state Completed // A Completed Order cannot be processed any further.
+    }
+    
+    entity InventoryReservation
+    {
+        state Requested[Committed, Cancelled]
+        state Committed
+        state Cancelled
+    }
+    
+	/*
+	 * A transaction is an exchange of messages that leaves the process in a known state.
+	 * A transaction implements one of 6 predefined patterns. The pattern follows the transaction name.
+	 */ 
+
+    /*
+     * An inform transaction is a one way interaction with no return messages.
+     * An inform transaction is also called an event.
+	 * By convention, an event uses the naming pattern <noun><past_tense_verb>.
+     */
+    transaction InventoryUpdated inform
+    {
+    	/*
+    	 * Every transaction has exacty two roles: sender and receiver.
+    	 * One or more capabilities may play any given role at the same time.
+    	 */
+        sender
+        {
+        	/*
+        	 * The following line defines the message sent to start the transaction.
+        	 * This message uses the default message name, which is the transaction name.
+	    	 * It also uses the default topic name, which is the transaction name.
+	         * A topic is generated for every message in every transaction called by a workflow.
+			 * The default topic name uses the naming pattern <workflow_package>/<workflow_name>/<message_name>.
+			 * Since no return messages can be sent, an event has no timeouts or retries.
+        	 */
+        	message InventoryUpdated
+        }
+        
+        /*
+         * The receiver of an event cannot send any return messages, and does not even have to be declared.
+         * If the receiver is not expecting the message, it must send a cancellation to abort the transaction 
+         *   with the Reason set to MessageOutOfSequence. 
+		 *   A cancellation uses the standard message type com.x.Acknowledgements.v1.TransactionCancelled. 
+		 *   A cancellation must be sent to the standard topic com.x.Acknowledgements.v1/TransactionCancelled.
+		 *   A cancellation must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
+         */
+        receiver
+	}
+	
+	/*
+	 * A notify transaction is a one way interaction with acknowledgements.
+	 * A notify transaction is also called a notification.
+	 * By convention, a notification uses the naming pattern <noun><past_tense_verb>.
+	 * This transaction has variants, which are specified in angle brackets.
+	 */
+    transaction OrderCreated<Variant1, Variant2> notify 
+    { 
+        sender
+        {        	
+        	/*
+			 * The receiver of a notification can send acknowledgements to the sender.
+			 * Acknowledgements are routed directly to the sender using the X-XC-PUBLISHER-ID header.
+			 *   An acknowledgement must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
+			 * If an acknowledgement is received out of order, then the sender must send a cancellation
+			 *   to abort the transaction, with the Reason set to ReceiptOutOfSequence or ValidationOutOfSequence.
+        	 */
+        	message OrderCreated
+        	{
+        		/*
+        		 * Acknowledgements are subject to timeouts.
+				 * A timeout is measured from the start of the transaction to the receipt of the acknowledgement.
+				 * The unit for a timeout may be 's' for seconds, 'm' for minutes, 'h' for hours, or 'd' for days.
+				 * There are two types of acknowledgement: receipt and validation.
+				 *   A receipt indicates that the receiver received the message and was able to parse it.
+				 *     The timeout for a receipt is specified using the receipt keyword.
+				 *     If a receipt timeout is specified, then the receiver must send a receipt, a validation, 
+				 *       or a cancellation.
+				 *     If a receipt timeout is not specified, then the receiver must not send a receipt.
+				 *     A receipt uses the standard message type com.x.Acknowledgements.v1.MessageReceived.
+				 *     A receipt must be sent to the standard topic com.x.Acknowledgements.v1/MessageReceived.
+				 *   A validation indicates that the receiver was able to validate the message contents.
+				 *     If the receiver cannot validate the message contents, then it must send a cancellation 
+				 *       to abort the transaction, with the Reason set to ValidationError.
+				 *     The timeout for a validation is specified using the validation keyword. 
+				 *     If a validation timeout is specified, the receiver must send a validation or a cancellation.
+				 *     If a validation timeout is not specified, then the receiver must not send a validation.
+				 *     If both a receipt timeout and a validation timeout are specified, then the receiver may send 
+				 *       a validation instead of a receipt within the receipt timeout.
+				 *     A validation uses the standard message type com.x.Acknowledgements.v1.MessageValidated.
+				 *     A validation must be sent to the standard topic com.x.Acknowledgements.v1/MessageValidated.
+        		 */ 
+        		timeouts(receipt=1h, validation=24h)
+        		
+        		/*
+				 * If a given acknowledgement is not received within the specified timeout, 
+				 *   then the sender must retry up to the specified number of times.
+				 * If the specified number of retries is exhausted, then the sender must send a cancellation
+				 *   to abort the transaction, with the Reason set to ReceiptTimedOut or ValidationTimedOut.
+        		 */
+        		retries=3 
+        	}
+        	
+        	/*
+        	 * The variant name in angle brackets indicates that this message is used with Variant1.
+        	 * A variant message may have a different type and/or different SLAs than the default.
+    	     * By convention, messages for variants use the naming pattern <default_message_name><variant>.
+        	 */
+        	message<Variant1> OrderCreatedVariant1 
+        	{
+        		timeouts(receipt = 1h, validation=12h)
+        		retries=5
+        	}
+        	
+        	/*
+        	 * This message is used with Variant2. It does not require any acknowledgements.
+	         * It specifies an optional string to override the default topic name.
+	         */
+        	message<Variant2> OrderCreatedVariant2 "this_string/overrides_the_default/topic_name"
+        }
+    }
+    
+    /*
+     * A response transaction is a two way interaction that instructs the receiver to take action.
+     * A response transaction is also called a command.
+	 * By convention, a command uses the naming pattern <verb><noun>.
+     */
+    transaction PrepareOrder response
+    {
+        sender
+        {
+        	message PrepareOrder
+        	{					
+				/*
+				 * The receiver of a two way transaction must send a response or a cancellation to the sender.
+				 * Responses are routed directly to the sender using the X-XC-PUBLISHER-ID header.
+				 *   A response must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
+				 * A response indicates whether the operation succeeded or failed and may contain additional data.
+				 * If a response is received out of order, then the sender must send a cancellation
+				 *   to abort the transaction, with the Reason set to ResponseOutOfSequence.
+				 * The timeout for a response is specified using the response keyword.
+				 *   It is measured from the start of the transaction to the receipt of the reponse.
+				 * If a response is not received within the specified timeout, 
+				 *   then the sender must retry up to the specified number of times.
+				 *   If the specified number of retries is exhausted, then the sender must send a cancellation
+				 *     to abort the transaction, with the Reason set to the appropriate TimedOut error code.
+				 * If a response timeout is not specified, it defaults to 30s for queries, and to 3m for all 
+				 *   other two way transaction types.
+				 * If a receipt timeout and/or a validation timeout is specified, then the receiver may send a 
+				 *   response instead of a receipt and/or a validation, respectively, within the specified timeout.
+				 */
+        		timeouts(receipt=1h, validation=24h, response=3d)
+        		
+        		/*
+				 * If a response is not received within the specified timeout, 
+				 *   then the sender must retry up to the specified number of times.
+				 * If the specified number of retries is exhausted, then the sender must send a cancellation
+				 *   to abort the transaction, with the Reason set to ResponseTimedOut.
+        		 */
+        		retries=3
+        	}
+        }
+        
+        receiver
+        {
+        	/*
+        	 * One or more response messages may be specified. Only one may be used in a given execution.
+        	 * A response message must indicate whether the transaction succeeded or failed.
+        	 */
+        	
+        	/* 
+			 * By convention, the default success message uses the naming pattern <default_message_name>Succeeded.
+        	 */
+        	success PrepareOrderSucceeded
+        	{
+        		/*
+	        	 * A response message may have timeouts requiring acknowledgements from the sender.
+	        	 * They are implemented as above, but apply to the response message, not the request message.
+        		 */
+            	timeouts(receipt=1h, validation=24h)
+            	retries=3
+            }
+            
+        	/* 
+			 * By convention, the default failure message uses the naming pattern <default_message_name>Failed.
+			 * If no SLAs are needed for a given message, then the SLA specification block can be omitted.
+        	 */
+            failure PrepareOrderFailed
+        }
+    }
+        
+    /*
+     * A transaction can have parameters that can be used in pre and post conditions.
+     * A parameter binds to all entities of the specified type referenced by the transaction.
+     * A transaction references an entity by using its identity in a message.
+     */
+    transaction ShipOrder(Order order) response
+    {
+    	/*
+    	 * The sender and receiver declarations are optional. By default, for a command:
+    	 *   The sender sends the default message without acknowledgements or retries.
+    	 *   The receiver sends the default success and failure messages without acknowledgements or retries.
+    	 */
+    	 
+    	/*
+    	 * All preconditions must be true when the transaction starts. 
+    	 * The following precondition requires that the order be in the Prepared state.
+         */
+        preconditions(order[Order.Prepared])
+        
+        /*
+         * All success postconditions must be true when the transaction succeeds.
+         * All failure postconditions must be true when the transaction fails.
+         * A postcondition is an expression asserting that a parameter is in a specified state.
+         */
+        postconditions 
+        {
+        	/*
+        	 * When the transaction succeeds, all referenced orders must be in state Order.Shipped.
+        	 */
+          	success(order[Order.Shipped]) 
+          	
+        	/*
+        	 * When the transaction fails, all referenced orders must be in state Order.Prepared.
+        	 */
+          	failure(order[Order.Prepared])
+        }
+    }
+    
+    /*
+     * The entire transaction body is optional.
+     * By default, a transaction has no variants or parameters, and no pre or post conditions. 
+     */
+    transaction UpdateInventory response
+
+    /*
+	 * A query is a two way transaction that has no side effects.
+	 * There are two types of query: search and lookup.
+	 *   A search takes explicitly supplied search criteria and returns an array of objects.
+	 *   A lookup takes an object identifier and returns the object.
+	 * By convention, they use the naming pattern Search<noun> and Lookup<noun>, respectively.
+	 * By default, a query has no acknowledgements or retries.
+	 */
+ 	transaction SearchProduct query
+    {
+        sender
+        {
+        	message SearchOrder
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success SearchOrderSucceeded            
+            failure SearchOrderFailed
+        } 
+    }
+    
+    transaction LookupOrder query
+    {
+        sender
+        {
+        	message LookupOrder
+        	{
+        		timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success LookupOrderSucceeded
+            failure LookupOrderFailed
+        } 
+    }
+}

@@ -1,0 +1,127 @@
+/*
+ * This file contains a sample of the X.commerce Open Commerce Language (XOCL).
+ * By convention, processes and workflows for a domain reside in the file <domain>.Processes.xocl
+ */
+
+/*
+ * One AVDL file is generated for every package that contains a workflow.
+ * The package name becomes the namespace for the AVDL file.
+ */
+package com.x.xocl.example.v1
+{	
+	import com.x.xocl.example.v1.*
+	
+    // A process is a distributed activity with a goal
+    // A process can have parameters
+    process ShipOrder(Order orderToShip)
+    {
+        description "OrderManager requests shipment and updates inventory"
+        
+        // Process roles are eventually bound to topics
+        roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
+        
+        // Preconditions must be true before the process starts
+        preconditions(orderToShip[Order.Prepared])
+        
+        // Postconditions must be true after the process finshes
+        postconditions
+        {
+          success(orderToFulfill[Order.Shipped])
+          failure(orderToFulfill[Order.Cancelled])
+        }
+    }
+    
+    // A workflow implements a process
+    workflow StandardShipOrder implements ShipOrder
+    {
+    	// A workflow is a sequence of actions
+    	// This action calls a transaction 
+        transaction ShipOrder
+        {
+        	// Roles in the process bind to roles in the transaction
+        	// OrderManager is the sender and ShippingManager is the receiver
+        	roles(ShipOrder.OrderManager, ShipOrder.ShippingManager)
+        }
+        
+        transaction UpdateInventory
+        {
+        	roles(ShipOrder.OrderManager, ShipOrder.InventoryManager)
+        }
+        
+        transaction InventoryUpdated
+        {
+        	roles(ShipOrder.OrderManager, ShipOrder.OfferManager)
+        }
+    }
+
+	// A process can be implemented by multiple workflows
+    workflow DropShipOrder implements ShipOrder
+    {
+        transaction ShipOrder
+        {
+        	roles(ShipOrder.OrderManager, ShipOrder.ShippingManager)
+        }
+        
+        transaction UpdateInventory
+        {
+        	roles(ShipOrder.OrderManager, ShipOrder.InventoryManager)
+        }
+    }
+
+    // A process can have variants
+    process FulfillOrder<variant1, variant2>(Order order)
+    {
+        description "Merchant fulfills the sales-channel order from Buyer using Merchant Console"
+        
+        // Process roles indirectly bind to topics and messages
+        roles(OrderManager, OrderFulfiller, InventoryManager, WarehouseManager, ShippingManager, OfferManager)
+        
+        // Preconditions must be true before the process starts
+        preconditions(orderToFulfill[Order.Created])
+        
+        // Postconditions must be true after the process finshes
+        postconditions
+        {
+          success(orderToFulfill[Order.Shipped])
+          failure(orderToFulfill[Order.Cancelled])
+        }
+    }
+    
+    // A workflow implements a process and may have variants
+    workflow StandardFulfillOrder implements FulfillOrder
+    {
+    	// This call maps workflow variants to transaction variants - 
+    	// For process variant1, the workflow calls transaction variant A 
+    	// For process variant2, the workflow calls transaction variant B
+        transaction OrderCreated<FulfillOrder.variant1, FulfillOrder.variant2>
+        {   	
+        	roles(FulfillOrder.OrderManager, FulfillOrder.OrderFulfiller)
+        }
+        
+        // A transaction call can pass parameters to the transaction
+        transaction PrepareOrder(FulfillOrder.order)
+        {
+        	// A transaction call aLso maps workflow roles to transaction roles - 
+        	// OrderManager is the sender and OrderFulfiller is the receiver     
+        	roles(FulfillOrder.OrderFulfiller, FulfillOrder.WarehouseManager)
+        }
+        
+        // This action splits the workflow into two or more parallel branches
+        any 
+        {
+        	// A branch may have an optional condition
+        	// The condition is defined in terms of a given process parameter being in a given state
+        	// This condition requires the parameter named order to be in state Order.Prepared
+        	// This branch runs if orderToFulfill is in state Order.Prepared
+            if(orderToFulfill[Order.Prepared])
+            {
+            	// A workflow can call another workflow
+                workflow StandardShipOrder(FulfillOrder.order) 
+                {
+                	// Roles in the calling process bind to roles in the called process
+                	roles(FulfillOrder.OrderManager, FulfillOrder.InventoryManager, FulfillOrder.ShippingManager, FulfillOrder.OfferManager)
+                }
+            }
+        }
+    }
+}
