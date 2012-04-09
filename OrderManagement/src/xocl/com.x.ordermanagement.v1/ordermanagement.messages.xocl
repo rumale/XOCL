@@ -347,7 +347,19 @@ package com.x.ordermanagement.v1 {
 	}
 	
     record SearchOrder{
-		datetime? lastUpdated;
+    	
+		datetime? lastModified;
+		/**
+		 * Restrict the number of items return to this many or less.
+		 * When null, it is assumed there is no restriction
+		 */
+		long? itemsRequested;
+		
+		/**
+		 * Return the results starting from this zero-based index.
+		 * When null, items will be returned started from the first item
+		 */
+		long? startItemIndex;
 	}	
 
 	record SearchOrderSucceeded{
