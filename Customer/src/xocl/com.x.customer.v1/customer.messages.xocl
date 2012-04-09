@@ -13,18 +13,27 @@ package com.x.customer.v1{
 		array<Error> errors;	
 	}
 	
+	enum Gender {
+		MALE,
+		FEMALE
+	}
+	
 	record CustomerData {  //TODO: Security annotations here.
 		Name fullName;	   
 	    array<Address>? addresses;
 		Phone? primaryPhone;
-	    Phone? additionalPhones;
-		string? emailAddress;   		
+		string emailAddress; 
+		Gender? gender;
+		datetime? dateOfBirth;
+		string? company;
+		datetime dateCreated;
 	}  
 	
     record Customer extends CustomerData{
-		string id;	
+		guid id;   //REVIEW THIS.   GUID is created by the system that creates the record.	
 	}
-		record SearchCustomer{
+	
+	record SearchCustomer{
 		
 		/* When this field is present, get all customers modified since this date that also match the other criteria */
 		datetime? modifiedSince;
@@ -89,6 +98,7 @@ package com.x.customer.v1{
 	}
 	
 
+ 	// NOTE: Email opt-out customers should not appear in this response.
 	record SearchEmailCustomerSucceeded{
 		
 		array<CustomerEmail> customers;
