@@ -14,7 +14,7 @@ package com.x.marketplace.v1{
 	workflow MarketplaceSetup implements MarketplaceSetup
 	{		
 		any{
-			all{
+			do{
 				any{
 			 		transaction GetAllAvailableChannel
 					{
@@ -40,10 +40,8 @@ package com.x.marketplace.v1{
 					}
 				}	
 			}
-			all{
-				workflow AuthorizationGrant{
+		    workflow AuthorizationGrant{
 					roles(MarketplaceSetup.AuthorizedMarketplaceUser, MarketplaceSetup.Marketplace)
-				}
 			}	
 		}
 		
@@ -155,6 +153,12 @@ package com.x.marketplace.v1{
 			{
 				roles(OfferManager, Marketplace)
 			}
+			any{
+				workflow OfferDeactivation
+				{
+					roles(Marketplace, OfferManager)	
+				}
+			}
 		}
 	   postconditions
 		{
@@ -168,17 +172,18 @@ package com.x.marketplace.v1{
 		roles (Marketplace, OfferManager)
 		
 		preconditions(offer[Offer.Inactive])
-		workflow
-		{
-			transaction OfferDeactivated
-			{
-				roles(Marketplace, OfferManager)
-	
-			}
-		}
+
 		postconditions
 		{
 			success(offer[Offer.Inactive])
+		}
+	}
+	
+    workflow OfferDeactivation implements OfferDeactivation
+	{
+		transaction OfferDeactivated
+		{
+			roles(Marketplace, OfferManager)
 		}
 	}
 	
@@ -198,7 +203,12 @@ package com.x.marketplace.v1{
 				{
 					roles(OfferManager, Marketplace)
 				}
-			
+				any{
+					workflow OfferDeactivation
+					{
+						roles(Marketplace, OfferManager)	
+					}
+				}
 		}
 	   postconditions
 		{
