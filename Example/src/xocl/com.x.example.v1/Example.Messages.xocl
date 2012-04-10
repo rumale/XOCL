@@ -88,8 +88,9 @@ package com.x.example.v1
     	
     	/*
     	 * The map and fixed types map directly to the AVDL equivalents and have the same semantics.
-    	 */ 
-    	map<fixed(256)> tokens
+    	 */
+    	//TODO: there is currently a language/generator incompatibility regarding fixed type, commenting this out for now.
+    	//map<fixed(256)> tokens
     }
 
 	record OrderCancelled 
