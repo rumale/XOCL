@@ -1,0 +1,38 @@
+package com.x.marketplace.v1{
+	import com.x.ebay.v1.*
+	import com.x.marketplace.v1.*
+	import com.x.ordermanagement.v1.*
+	import com.x.authz.v1.*
+	
+    contract Marketplace 
+    {
+    	description "An adapter to a sales channel that is an online marketplace, such as eBay"
+    	
+    	roles
+    	{   		
+	   		//Marketplace  roles 
+	   		MarketplaceSetup.MarketplaceMetadataProvider
+	   		PolicyGroupCreation.MarketplacePolicyManager<Ebay>
+	   		PolicyGroupUpdate.MarketplacePolicyManager<Ebay> 
+	   		PolicyGroupDeletion.MarketplacePolicyManager<Ebay> 
+	   		PolicyGroupLookup.MarketplacePolicyManager<Ebay> 
+	   		OfferPublication.Marketplace<Ebay> 
+	   		OfferDeactivation.Marketplace
+	   		PublishedOfferRevision.Marketplace<Ebay>
+	   		PublishedOfferRevocation.Marketplace
+	   		OfferSearch.Marketplace
+	   		StoreLookup.MarketplaceMarketplaceMetadataProvider
+	   		AuthorizedAccountSearch.MarketplaceMetadataProvider
+	   		AuthorizationRevoke.MarketplaceMetadataProvider
+	   
+	   		//Order roles
+	   		ProcessMarketplaceOrder.Marketplace<MarketplaceOrder> 
+	   		
+	   		//Auth roles
+	   		AuthorizationGrant.AuthorizationProvider
+	   		
+	    }
+	    
+	 }
+	
+}
