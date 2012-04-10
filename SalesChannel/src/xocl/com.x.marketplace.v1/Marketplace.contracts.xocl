@@ -1,7 +1,8 @@
 package com.x.marketplace.v1{
-	import com.x.saleschannel.v1.*
+	import com.x.ebay.v1.*
 	import com.x.marketplace.v1.*
 	import com.x.ordermanagement.v1.*
+	import com.x.authz.v1.*
 	
     contract Marketplace 
     {
@@ -9,26 +10,27 @@ package com.x.marketplace.v1{
     	
     	roles
     	{
-    		//sales channel roles 
-	   		SalesChannelSetup.SalesChannelMetadataProvider
-	   		PolicyGroupCreation.SalesChannelPolicyManager<Marketplace>
-	   		PolicyGroupUpdate.SalesChannelPolicyManager<Marketplace> 
-	   		PolicyGroupDeletion.SalesChannelPolicyManager<Marketplace> 
-	   		PolicyGroupLookup.SalesChannelPolicyManager<Marketplace> 
-	   		OfferPublication.SalesChannel<Marketplace> 
-	   		OfferDeactivation.SalesChannel
-	   		PublishedOfferRevision.SalesChannel<Marketplace>
-	   		PublishedOfferRevocation.SalesChannel<Marketplace>
-	   		OfferSearch.SalesChannel<Marketplace>
-	   		
-	   		//Marketplace specific roles
-	   		AuthorizationGrant.MarketplaceSalesChannel
-	   		StoreLookup.MarketplaceSalesChannelMetadataProvider
-	   		AuthorizedAccountSearch.MarketplaceSalesChannelMetadataProvider
-	   		AuthorizationRevoke.MarketplaceSalesChannelMetadataProvider
+    			   		
+	   		//Marketplace  roles 
+	   		MarketplaceSetup.MarketplaceMetadataProvider
+	   		PolicyGroupCreation.MarketplacePolicyManager<Marketplace>
+	   		PolicyGroupUpdate.MarketplacePolicyManager<Marketplace> 
+	   		PolicyGroupDeletion.MarketplacePolicyManager<Marketplace> 
+	   		PolicyGroupLookup.MarketplacePolicyManager<Marketplace> 
+	   		OfferPublication.Marketplace<Marketplace> 
+	   		OfferDeactivation.Marketplace
+	   		PublishedOfferRevision.Marketplace<Marketplace>
+	   		PublishedOfferRevocation.Marketplace<Marketplace>
+	   		OfferSearch.Marketplace<Marketplace>
+	   		StoreLookup.MarketplaceMarketplaceMetadataProvider
+	   		AuthorizedAccountSearch.MarketplaceMetadataProvider
+	   		AuthorizationRevoke.MarketplaceMetadataProvider
 	   
 	   		//Order roles
-	   		ProcessSalesChannelOrder.SalesChannel<SalesChannelOrder> 
+	   		ProcessMarketplaceOrder.Marketplace<MarketplaceOrder> 
+	   		
+	   		//Auth roles
+	   		AuthorizationGrant.AuthorizationProvider
 	   		
 	    }
 	    

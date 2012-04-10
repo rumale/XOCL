@@ -2,77 +2,280 @@
 package com.x.marketplace.v1{
 	
 	import com.x.marketplace.v1.*
+	import com.x.authz.v1.*
 	
-			
-    process AuthorizationGrant(Authorization auth)
+	process MarketplaceSetup
 	{
-		description "Merchant authorizes software to act on Merchant's behalf"
-		roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
-		preconditions(auth[Authorization.New])	
+		description "A consumer queries one sales channel, gets sites and metadata back"
+
+		roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider, AuthorizedMarketplaceUser, Marketplace)
+	}
 	
-	    
-	    postconditions
-		{
-			success(auth[Authorization.Granted])
-			failure(auth[Authorization.Failed])
+	workflow MarketplaceSetup implements MarketplaceSetup
+	{		
+		any{
+			all{
+				any{
+			 		transaction GetAllAvailableChannel
+					{
+						roles(MarketplaceSetup.MarketplaceMetadataConsumer, MarketplaceSetup.MarketplaceMetadataProvider)
+					}
+				}
+				any{
+					transaction GetAllSite  //goes to a specific destination
+					{
+						roles(MarketplaceSetup.MarketplaceMetadataConsumer, MarketplaceSetup.MarketplaceMetadataProvider)
+					}	
+				}
+				any{
+					transaction LookupSiteMetadata
+					{
+						roles(MarketplaceSetup.MarketplaceMetadataConsumer, MarketplaceSetup.MarketplaceMetadataProvider)
+					}	
+				}
+				any{
+					transaction SearchCategory //A consumer searches site for available categories
+					{
+						roles(MarketplaceSetup.MarketplaceMetadataConsumer, MarketplaceSetup.MarketplaceMetadataProvider)
+					}
+				}	
+			}
+			all{
+				workflow AuthorizationGrant{
+					roles(MarketplaceSetup.AuthorizedMarketplaceUser, MarketplaceSetup.Marketplace)
+				}
+			}	
 		}
 		
+		
 	}
-	workflow  AuthorizationGrant implements AuthorizationGrant
+	
+	
+    process PolicyGroupCreation<Ebay> (PolicyGroup policyGroup)
+	{
+		description "A merchant creates a policy group"
+		
+		roles(MarketplaceMerchantConsole, MarketplacePolicyManager, MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
+		
+		preconditions(!exists(policyGroup))
+	
+		workflow 
 		{
-			
-			transaction InitAuthorization
-			{
-				roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+			any{
+				workflow MarketplaceSetup
+				{
+					roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
+				}
 			}
-			//TODO:  timer block
-			transaction CompleteAuthorization
-			{
-				roles(AuthorizedMarketplaceUser, MarketplaceSalesChannel)
+		     transaction CreatePolicyGroup<Ebay>
+			 {
+				   roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
 			}
 		}
+
+	    postconditions
+		{
+			success(exists(policyGroup))
+			failure(!exists(policyGroup))
+		}
+	}	
 	
-	
-	process StoreLookup
+    process PolicyGroupUpdate<Ebay> (PolicyGroup policyGroup)
 	{
-		description "A merchant looks up metadata about their marketplace store"
-		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+		description "A merchant updates a policy group"
+		
+		roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
+		
+		preconditions(exists(policyGroup))
+	
+		workflow 
+		{
+		     transaction UpdatePolicyGroup<Ebay>
+			 {
+				  roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
+			}
+		}
+
+	    postconditions
+		{
+			success(exists(policyGroup))
+			failure(exists(policyGroup))
+		}
+	}
+	
+		
+    process PolicyGroupDeletion (PolicyGroup policyGroup)
+	{
+		description "A merchant deletes a policy group"
+		
+		roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
+		
+		preconditions(exists(policyGroup))
+	
+		workflow 
+		{
+			
+		     transaction DeletePolicyGroup
+			 {
+				  roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
+			}
+		}
+
+	    postconditions
+		{
+			success(!exists(policyGroup))
+			failure(exists(policyGroup))
+		}
+	}
+	
+    process PolicyGroupLookup<Ebay>
+	{
+		description "A merchant looks up a policy group by ID"
+		roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
 	
 		workflow
 		{
-			transaction LookupStore
+			transaction LookupPolicyGroup<Ebay>
 			{
-				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+				roles(MarketplaceMerchantConsole, MarketplacePolicyManager)
 			}
 		}
 	}
+	
+	process OfferPublication<Ebay>(Offer offer)  
+	{
+		description "A merchant publishes offers to a sales channel"
+		roles(OfferManager, Marketplace)
+	
+		preconditions(offer[Offer.Created])
+	
+		workflow
+		{
+			transaction PublishOffer<Ebay>
+			{
+				roles(OfferManager, Marketplace)
+			}
+		}
+	   postconditions
+		{
+			success(offer[Offer.Active])
+		}
+	}
+	
+	process OfferDeactivation(Offer offer)
+	{
+		description "A sales channel deactivates an existing offer"
+		roles (Marketplace, OfferManager)
+		
+		preconditions(offer[Offer.Inactive])
+		workflow
+		{
+			transaction OfferDeactivated
+			{
+				roles(Marketplace, OfferManager)
+	
+			}
+		}
+		postconditions
+		{
+			success(offer[Offer.Inactive])
+		}
+	}
+	
+	
+	process PublishedOfferRevision(Offer offer)
+	{
+		
+		description "A merchant updates publishes offers in a sales channel"
+		
+		roles(OfferManager, Marketplace)
+		
+		preconditions(exists(offer))
+	
+		workflow
+		{
+				transaction RevisePublishedOffer
+				{
+					roles(OfferManager, Marketplace)
+				}
+			
+		}
+	   postconditions
+		{
+			success(offer[Offer.Active])
+		}
+		
+	}
+	
+	process PublishedOfferRevocation(Offer offer)
+	{
+		
+		description "A merchant cancels an offer in a sales channel"
+		
+		roles(OfferManager, Marketplace)
+	
+		preconditions(offer[Offer.Active])
+	
+		workflow
+		{
+				transaction RevokePublishedOffer
+				{
+					roles(OfferManager, Marketplace)
+				}
+			
+		}
+	   postconditions
+		{
+			success(offer[Offer.Inactive])
+		}
+		
+	}
+	
+	process OfferSearch{
+	    
+	    description "Offer Manager queries Sales Channel to reconcile offer data"
+		
+		roles( OfferManager, Marketplace)
+		
+		workflow
+		{
+				transaction SearchOffer
+				{
+						roles(OfferManager, Marketplace)
+				}	
+		}
+		
+	}
     
-    process AuthorizedAccountSearch
+    process AuthorizedAccountSearch (Authorization auth)
 	{
 		description "A merchant retrieves their account information"
-		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
-	
+		roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
+		preconditions(exists(auth))
 		workflow
 		{
 			transaction GetAllAuthorizedAccount
 			{
-				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+				roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
 			}
 		}
 	}
-	process AuthorizationRevoke
+	
+	process AuthorizationRevoke (Authorization auth)
 	{
 		description "A merchant disassociates their marketplace account"
-		roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
-	
+		roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
+		preconditions(exists(auth))
 		workflow
 		{
 			transaction RevokeAuthorization
 			{
-				roles(MarketplaceSalesChannelMetadataConsumer, MarketplaceSalesChannelMetadataProvider)
+				roles(MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
 			}
 		}
+	    postconditions
+		{
+			success(!exists(auth))
+		}	
 	}
-
-
 }
