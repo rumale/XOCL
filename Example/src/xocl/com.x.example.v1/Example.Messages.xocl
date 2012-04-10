@@ -1,10 +1,11 @@
 /*
  * This file contains a sample of the X.commerce Open Commerce Language (XOCL).
  * By convention, messages and supporting types for a domain reside in the file <domain>.Messages.xocl
+ * The XOCL type notation is similar to the AVDL type notation.
  */
 
 /*
- * The XOCL type notation is similar to the AVDL type notation.
+ * A XOCL file must contain exactly one top level package.
  * A package defines a namespace and optionally a version for the elements it contains.
  * A package name must be a dot delimited path that ends in a version indicator.
  * A version indicator consists of the letter 'v' followed by an integer valued version number.
@@ -18,7 +19,7 @@ package com.x.example.v1
 	
 	/*
 	 * An enumerated type is a list of literals. Literal values are integers starting at zero as in AVDL.
-	 * An enumerated type maps directly to its AVDL equivalent and has the same meaning in XOCL.
+	 * An enumerated type maps directly to the AVDL equivalent and has the same semantics.
 	 */
     enum OrderType 
     {
@@ -29,6 +30,7 @@ package com.x.example.v1
     
 	/* 
 	 * A record is a structured type containing a set of named properties.
+	 * A record type maps directly to the AVDL equivalent and has the same semantics.
 	 */
 	record Order
 	{
@@ -53,16 +55,19 @@ package com.x.example.v1
     {
     	/*
     	 * A record type may contain instances of other record types by value.
+    	 * Embedded records map directly to the AVDL equivalent and have the same semantics.
     	 */
     	Order order;
     }
     
     /*
      * This record extends OrderCreated. 
-     * Extending a record is like subclassing in Java. The extender inherits all fields from the extendee.
+     * Extension maps to replication in AVDL. All properties in the extended record are replicated 
+     *   in the extending record. 
      * This record is used by a variant of transaction OrderCreated.
+     * By convention, messages for variants use the naming pattern <default_message_name><variant>.
      */
-    record OrderCreatedVariant1 extends OrderCreated 
+    record OrderCreatedWithCreationMetadata extends OrderCreated 
     {
     	/*
     	 * The ? operator in the following declaration indicates that the property is optional.
@@ -73,19 +78,18 @@ package com.x.example.v1
     	datetime? dateCreated = now 
     	
     	/*
-    	 * The fixed and bytes types map directly to their AVDL equivalents and have the same meanings in XOCL.
+    	 * The bytes type maps directly to the AVDL equivalent and has the same semantics.
     	 */
-    	fixed(256) token
-    	bytes buffer
+    	bytes metadata
     }
     
-    record OrderCreatedVariant2 extends OrderCreatedVariant1 
+    record OrderCreatedWithAuthorization extends OrderCreatedWithCreationMetadata 
     {
     	
     	/*
-    	 * The map and string types map directly to their AVDL equivalents and have the same meanings in XOCL.
+    	 * The map and fixed types map directly to the AVDL equivalents and have the same semantics.
     	 */ 
-    	map<string> authorizations 
+    	map<fixed(256)> tokens
     }
 
 	/*
@@ -95,20 +99,16 @@ package com.x.example.v1
 	 */
     record SearchOrder
     {
-		/* 
-		 * When specified, get all orders modified since this date,
-		 */
-		datetime? modifiedSince;
-		
-		/**
-		 * Restrict the number of items return to this many or less.
-		 * When null, it is assumed that there is no restriction.
+		/*
+		 * By convention, a search includes an optional limit on the number of items returned.
+		 * If not specified, the number of items returned in not limited.
+		 * The int and long types maps directly to the AVDL equivalents and have the same semantics.
 		 */
 		long? itemsRequested;
 		
-		/**
-		 * Return the results starting from this zero-based index.
-		 * When null, items will be returned started from the first item.
+		/*
+		 * By convention, a search includes an optional zero-based starting index.
+		 * If not specified, results are returned starting with the first item in the result set.
 		 */
 		long? startItemIndex;
    }
@@ -118,25 +118,35 @@ package com.x.example.v1
  	 */
     record SearchOrderSucceeded extends SearchOrder
     {
+		/*
+		 * By convention, search results are returned as an array of records.
+    	 * The array type maps directly to the AVDL equivalent and has the same semantics.
+		 */
         array<Order> results;
     }
  
- 	/*
- 	 * By convention, a failure message congtains an array of Error.
- 	 */
     record SearchOrderFailed extends SearchOrder
     {
+	 	/*
+	 	 * By convention, a failure message contains an array of Error records.
+	 	 */
         array<Error> errors;
     }
     
     record LookupOrder
     {
+	    /*
+	     * By convention, a lookup includes the ID of the object being requested.
+	     */
         guid orderId;
     }
  
     record LookupOrderSucceeded extends LookupOrder
     {
-    	OrderType orderType;
+    	/*
+    	 * By convention, a lookup returns the entire object that was requested.
+    	 */
+    	Order order;
     }
     
     record LookupOrderFailed extends LookupOrder
@@ -155,7 +165,7 @@ package com.x.example.v1
 	/*
 	 * This record defines a success message for transaction PrepareOrder.
 	 * By convention, the default message uses the naming pattern <default_message_name>Succeeded.
-	 * Extending the request message includes the entity identifier to simplify correlation.
+	 * Extending the request message makes it easier to correlate the results with the request.
 	 */
 	record PrepareOrderSucceeded extends PrepareOrder {} 
 	
@@ -170,9 +180,14 @@ package com.x.example.v1
     	guid orderID
     	
     	/*
-    	 * The union and int types map directly to their AVDL equivalents and have the same meanings in XOCL.
+    	 * The union and string types map directly to the AVDL equivalents and have the same semantics.
     	 */ 
-    	union{int, string} estimatedWeight = null
+    	union{string, null} shippingService = null
+    	
+    	/*
+    	 * The float and double types map directly to the AVDL equivalents and have the same semantics.
+    	 */ 
+		double estimatedWeight = 0.0    	
     }
     
     record ShipOrderSucceeded extends ShipOrder

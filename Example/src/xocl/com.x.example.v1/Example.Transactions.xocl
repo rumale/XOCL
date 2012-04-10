@@ -36,12 +36,11 @@ package com.x.example.v1
     
 	/*
 	 * A transaction is an exchange of messages that leaves the process in a known state.
-	 * A transaction implements one of 6 predefined patterns. The pattern follows the transaction name.
+	 * A transaction implements one of several predefined patterns. The pattern follows the transaction name.
 	 */ 
 
     /*
-     * An inform transaction is a one way interaction with no return messages.
-     * An inform transaction is also called an event.
+     * An inform transaction, also called an event, is a one way interaction with no return messages.
 	 * By convention, an event uses the naming pattern <noun><past_tense_verb>.
      */
     transaction InventoryUpdated inform
@@ -69,24 +68,24 @@ package com.x.example.v1
          *   with the Reason set to MessageOutOfSequence. 
 		 *   A cancellation uses the standard message type com.x.Acknowledgements.v1.TransactionCancelled. 
 		 *   A cancellation must be sent to the standard topic com.x.Acknowledgements.v1/TransactionCancelled.
+		 *   A cancellation must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 		 *   A cancellation must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
          */
         receiver
 	}
 	
 	/*
-	 * A notify transaction is a one way interaction with acknowledgements.
-	 * A notify transaction is also called a notification.
+	 * A notify transaction, also called a notification, is a one way interaction with acknowledgements.
 	 * By convention, a notification uses the naming pattern <noun><past_tense_verb>.
 	 * This transaction has variants, which are specified in angle brackets.
 	 */
-    transaction OrderCreated<Variant1, Variant2> notify 
+    transaction OrderCreated<WithCreationMetadata, WithAuthorization> notify 
     { 
         sender
         {        	
         	/*
 			 * The receiver of a notification can send acknowledgements to the sender.
-			 * Acknowledgements are routed directly to the sender using the X-XC-PUBLISHER-ID header.
+			 *   An acknowledgement must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 			 *   An acknowledgement must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
 			 * If an acknowledgement is received out of order, then the sender must send a cancellation
 			 *   to abort the transaction, with the Reason set to ReceiptOutOfSequence or ValidationOutOfSequence.
@@ -123,32 +122,33 @@ package com.x.example.v1
 				 *   then the sender must retry up to the specified number of times.
 				 * If the specified number of retries is exhausted, then the sender must send a cancellation
 				 *   to abort the transaction, with the Reason set to ReceiptTimedOut or ValidationTimedOut.
+				 * If the number of retries is not specified, it defaults to zero.
         		 */
         		retries=3 
         	}
         	
         	/*
-        	 * The variant name in angle brackets indicates that this message is used with Variant1.
-        	 * A variant message may have a different type and/or different SLAs than the default.
-    	     * By convention, messages for variants use the naming pattern <default_message_name><variant>.
+        	 * The variant name in angle brackets indicates that this message is used by the named variant 
+        	 *   instead of the default message.
+        	 * A variant message may have a different type and/or different SLAs than the default message.
+    	     * By convention, variant messages use the naming pattern <default_message_name><variant>.
         	 */
-        	message<Variant1> OrderCreatedVariant1 
+        	message<WithCreationMetadata> OrderCreatedWithCreationMetadata 
         	{
         		timeouts(receipt = 1h, validation=12h)
         		retries=5
         	}
         	
         	/*
-        	 * This message is used with Variant2. It does not require any acknowledgements.
-	         * It specifies an optional string to override the default topic name.
+        	 * This message is used by the variant WithAuthorization. It does not require any acknowledgements.
+	         * This message specifies an optional string to override the default topic name.
 	         */
-        	message<Variant2> OrderCreatedVariant2 "this_string/overrides_the_default/topic_name"
+        	message<WithAuthorization> OrderCreatedWithAuthorization "this_string/overrides_the_default/topic_name"
         }
     }
     
     /*
-     * A response transaction is a two way interaction that instructs the receiver to take action.
-     * A response transaction is also called a command.
+     * A response transaction, also called a command, is a two way interaction asking the receiver to take action.
 	 * By convention, a command uses the naming pattern <verb><noun>.
      */
     transaction PrepareOrder response
@@ -159,19 +159,15 @@ package com.x.example.v1
         	{					
 				/*
 				 * The receiver of a two way transaction must send a response or a cancellation to the sender.
-				 * Responses are routed directly to the sender using the X-XC-PUBLISHER-ID header.
+				 *   A response must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 				 *   A response must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
 				 * A response indicates whether the operation succeeded or failed and may contain additional data.
 				 * If a response is received out of order, then the sender must send a cancellation
 				 *   to abort the transaction, with the Reason set to ResponseOutOfSequence.
 				 * The timeout for a response is specified using the response keyword.
 				 *   It is measured from the start of the transaction to the receipt of the reponse.
-				 * If a response is not received within the specified timeout, 
-				 *   then the sender must retry up to the specified number of times.
-				 *   If the specified number of retries is exhausted, then the sender must send a cancellation
-				 *     to abort the transaction, with the Reason set to the appropriate TimedOut error code.
 				 * If a response timeout is not specified, it defaults to 30s for queries, and to 3m for all 
-				 *   other two way transaction types.
+				 *   other two way transactions.
 				 * If a receipt timeout and/or a validation timeout is specified, then the receiver may send a 
 				 *   response instead of a receipt and/or a validation, respectively, within the specified timeout.
 				 */
@@ -190,7 +186,7 @@ package com.x.example.v1
         receiver
         {
         	/*
-        	 * One or more response messages may be specified. Only one may be used in a given execution.
+        	 * One or more response messages may be specified. Only one may be used in a given interaction.
         	 * A response message must indicate whether the transaction succeeded or failed.
         	 */
         	
@@ -209,7 +205,7 @@ package com.x.example.v1
             
         	/* 
 			 * By convention, the default failure message uses the naming pattern <default_message_name>Failed.
-			 * If no SLAs are needed for a given message, then the SLA specification block can be omitted.
+			 * If the default SLAs are acceptable for a message, then the SLA specification block can be omitted.
         	 */
             failure PrepareOrderFailed
         }
@@ -230,14 +226,15 @@ package com.x.example.v1
     	 
     	/*
     	 * All preconditions must be true when the transaction starts. 
-    	 * The following precondition requires that the order be in the Prepared state.
+    	 * The following precondition requires that all referenced orders be in the Prepared state.
          */
         preconditions(order[Order.Prepared])
         
         /*
          * All success postconditions must be true when the transaction succeeds.
          * All failure postconditions must be true when the transaction fails.
-         * A postcondition is an expression asserting that a parameter is in a specified state.
+         * The state of every parameter with a state machine must be unambiguously defined
+         *   when the transaction ends.
          */
         postconditions 
         {
@@ -283,7 +280,13 @@ package com.x.example.v1
         } 
     }
     
-    transaction LookupOrder query
+    /*
+     * This transaction is a broadcast. Any two way transaction can be a broadcast.
+     * In a broadcast, the sender waits for the specified timeout to expire, and then processes 
+     *   all received messages, instead of sending a cancellation to abort the transaction.
+     * Any messages received after the specified timeout has expired are ignored by the sender.
+     */
+    transaction LookupOrder broadcast query
     {
         sender
         {

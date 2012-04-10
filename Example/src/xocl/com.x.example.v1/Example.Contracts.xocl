@@ -7,33 +7,47 @@ package com.x.example.v1
 {	
 	import com.x.example.v1.*
 	
-	// A contract can be implemented by a partner
+	/*
+	 * A contract is implemented by a capability.
+	 * A contract has a description and a set of process roles.
+	 */
     contract OutsourceOrderManager 
     {
-    	// A description defines the purpose of the contract
     	description "A company that outsources all order fulfillment functions"
     	
-    	// A set of roles collectivley define the implementer's responsibilities
+    	/*
+    	 * The roles collectivley define the capability's responsibilities.
+    	 */
     	roles
     	{
-	        FulfillOrder.OrderManager
-	        FulfillOrder.OfferManager
+	        OrderFulfillment.OrderManager
+	        OrderFulfillment.OfferManager
 	    }
     }
     
-    // This contract extends the previous one
+    /*
+     * A contract can extend one or more other contracts.
+     * Extending a contract causes its roles to be added to the extender.
+     */
     contract InHouseOrderManager extends OutsourceOrderManager
     {
     	description "A company that performs all order fulfillment functions"
     	roles
     	{
-    		// A role may be qualified by variants
-	        FulfillOrder.OrderFulfiller<variant1>
-	        FulfillOrder.InventoryManager<variant2>
-	        FulfillOrder.WarehouseManager<variant2>
+    		/*
+    		 * A role may be qualified by a variant, meaning that the responsiblity is to 
+    		 *   implement the specified role in the specified variant of the process.
+    		 */
+	        OrderFulfillment.OrderObserver<WithCreationMetadata>
+	        OrderFulfillment.InventoryManager<WithAuthorization>
+	        OrderFulfillment.WarehouseManager<WithAuthorization>
 	        
-	        // A contract may use multiple processes
-	        ShipOrder.ShippingManager(DropShipOrder)
+	        /*
+	         * A contract may span multiple processes, and may optionally specify the 
+	         *   workflow that must be supported if more than one workflow implements the 
+	         *   specified process.
+	         */
+	        OrderShipment.ShippingManager(OrderDropShipment)
         }
     }
 }

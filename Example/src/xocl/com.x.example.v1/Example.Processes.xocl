@@ -5,123 +5,200 @@
 
 /*
  * One AVDL file is generated for every package that contains a workflow.
- * The package name becomes the namespace for the AVDL file.
+ * The package name becomes the name of the AVDL file and also its namespace.
  */
 package com.x.example.v1
 {	
 	import com.x.example.v1.*
 	
-    // A process is a distributed activity with a goal
-    // A process can have parameters
-    process ShipOrder(Order orderToShip)
+    /*
+     * A process is a distributed activity with a desription and two or more roles.
+     * A process can have parameters that can be used in pre and post conditions.
+     * A parameter binds to all entities of the specified type referenced by the process.
+     * A process references an entity by passing it to a transaction or a workflow.
+     * By convention, processes use the naming pattern <noun><verb_as_noun>.
+     */
+    process OrderShipment(Order order)
     {
         description "OrderManager requests shipment and updates inventory"
         
-        // Process roles are eventually bound to topics
+        /*
+         * Process roles are bound to transaction roles by workflows.
+         * A capability playing a process role must implement all bound transaction roles.
+         */
         roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
         
-        // Preconditions must be true before the process starts
-        preconditions(orderToShip[Order.Prepared])
+    	/*
+    	 * All preconditions must be true when the process starts. 
+    	 * The following precondition requires that all referenced orders be in the Prepared state.
+         */
+        preconditions(order[Order.Prepared])
         
-        // Postconditions must be true after the process finshes
+        /*
+         * All success postconditions must be true when the process succeeds.
+         * All failure postconditions must be true when the process fails.
+         * The state of every parameter with a state machine must be unambiguously defined
+         *   when the process ends.
+         */
         postconditions
         {
-          success(orderToFulfill[Order.Shipped])
-          failure(orderToFulfill[Order.Cancelled])
+	    	/*
+	    	 * When the process succeeds, all referenced orders must be in state Order.Shipped.
+	    	 */
+	      	success(order[Order.Shipped]) 
+	      	
+	    	/*
+	    	 * When the process fails, all referenced orders must be in state Order.Prepared.
+	    	 */
+	      	failure(order[Order.Prepared])
         }
     }
     
-    // A workflow implements a process
-    workflow StandardShipOrder implements ShipOrder
+    /*
+     * A workflow implements a process the way a class implements an interface.
+     */
+    workflow OrderShipment[2d] implements OrderShipment
     {
-    	// A workflow is a sequence of actions
-    	// This action calls a transaction 
+    	/*
+	     * A workflow may have an optional timeout, specified in square brackets.
+		 * A timeout starts when the first transaction called directly or indirectly by the workflow starts.
+		 * The unit for a timeout may be 's' for seconds, 'm' for minutes, 'h' for hours, or 'd' for days.
+		 * If the timeout expires, the fabric must send cancellations to abort all transactions in progress.
+    	 */ 
+    	 
+    	/*
+    	 * A workflow is a sequence of actions. This action calls the transaction ShipOrder.
+    	 */
+        transaction ShipOrder(order)
+        {
+        	/*
+        	 * A transaction call binds process roles to transaction roles.
+        	 * The first role binds to the sender, the second role binds to the receiver.
+        	 * OrderManager is the sender. ShippingManager is the receiver.
+        	 */
+        	roles(OrderManager, ShippingManager)
+        }
+        
+        /*
+    	 * An action may start when it predecessor succeeds. If an action fails, the workflow fails.
+    	 * The following action is a do block, which lets a sequence of nested actions run repeatedly.
+    	 * A do block may have an optional iteration condition that specifies what makes it terminate.
+    	 * The format of the condition may be a numerical range, following UML range notation, or any 
+    	 *   type of boolean expression supported by XOCL. If no iteration condition is specified, the 
+    	 *   condition defaults to one occurence.
+    	 * Like all other blocks, a do block may have an optional timeout, specified in square brackets.
+    	 * The format and semantics of a block timeout are the same as for a workflow timeout.
+    	 */
+		 do(1)[1d]
+		 {
+			/*
+			 * The following action is an any block, which lets one or more nested actions run in parallel.
+			 * The any block succeeds when any of the nested actions succeeds, and fails only if all of 
+			 *   them fail. Actions in progress when the any block succeeds continue to run but their success 
+			 *   or failure does not affect the outcome. Actions in an any block may or may not occur. 
+			 * The following any block indicates that the transaction UpdateInventory may or may not occur.
+			 * The InventoryManager may therefore send InventoryUpdated to the OfferManager, even if the 
+			 *   OrderManager did not first send UpdateInventory, because, for example, the inventory might 
+			 *   have been updated through the user interface of the InventoryManager.
+		     */
+		    any
+		    {
+		        transaction UpdateInventory
+		        {
+		        	roles(OrderManager, InventoryManager)
+		        }
+		    }
+		    
+		    transaction InventoryUpdated
+		    {
+		    	roles(InventoryManager, OfferManager)
+		    }
+        }
+    }
+    
+    /*
+     * A process can be implemented by multiple workflows. This workflow also implements OrderShipment.
+     * This workflow is similar to the OrderShipment workflow, except that it omits the last transaction. 
+     */
+    workflow OrderDropShipment implements OrderShipment
+    {
         transaction ShipOrder
         {
-        	// Roles in the process bind to roles in the transaction
-        	// OrderManager is the sender and ShippingManager is the receiver
-        	roles(ShipOrder.OrderManager, ShipOrder.ShippingManager)
+        	roles(OrderShipment.OrderManager, OrderShipment.ShippingManager)
         }
         
         transaction UpdateInventory
         {
-        	roles(ShipOrder.OrderManager, ShipOrder.InventoryManager)
-        }
-        
-        transaction InventoryUpdated
-        {
-        	roles(ShipOrder.OrderManager, ShipOrder.OfferManager)
+        	roles(OrderShipment.OrderManager, OrderShipment.InventoryManager)
         }
     }
 
-	// A process can be implemented by multiple workflows
-    workflow DropShipOrder implements ShipOrder
-    {
-        transaction ShipOrder
-        {
-        	roles(ShipOrder.OrderManager, ShipOrder.ShippingManager)
-        }
-        
-        transaction UpdateInventory
-        {
-        	roles(ShipOrder.OrderManager, ShipOrder.InventoryManager)
-        }
-    }
-
-    // A process can have variants
-    process FulfillOrder<variant1, variant2>(Order order)
+    /*
+     * A process can have variants. Process variants control the inclusion or exclusion of workflow 
+     *   features, and can bind to transaction variants.
+     */
+    process OrderFulfillment<WithCreationMetadata, WithAuthorization>(Order order)
     {
         description "Merchant fulfills the sales-channel order from Buyer using Merchant Console"
         
-        // Process roles indirectly bind to topics and messages
-        roles(OrderManager, OrderFulfiller, InventoryManager, WarehouseManager, ShippingManager, OfferManager)
+        roles(OrderManager, OrderObserver, InventoryManager, WarehouseManager, ShippingManager, OfferManager)
         
-        // Preconditions must be true before the process starts
         preconditions(orderToFulfill[Order.Created])
         
-        // Postconditions must be true after the process finshes
+		/*
+		 * A single default workflow with the same name as the process may be specified within a process.
+		 */
+	    workflow[5d]
+	    {
+	    	/*
+	    	 * This transaction call maps workflow variants to transaction variants - 
+	    	 *   For process variant WithCreationMetadata, the workflow calls the first transaction variant. 
+	    	 *   For process variant WithAuthorization, the workflow calls the second transaction variant.
+	    	 */
+			
+			/*
+			 * An all block is like an any block, except that it succeeds only when all of the nested actions 
+			 *   succeed, and fails when any of them fail. Actions in an all block must occur.
+			 */
+	    	all[1d]
+	    	{
+		        transaction OrderCreated<OrderFulfillment.WithCreationMetadata, OrderFulfillment.WithAuthorization>
+		        {
+		        	roles(OrderManager, OrderObserver)
+		        }
+		        
+		        transaction PrepareOrder(order)
+		        {
+		        	roles(OrderManager, WarehouseManager)
+		        }
+	        }
+	        
+	        /*
+	         * An if block lets a sequence of nested actions run conditionally. The condition is any type of boolean 
+	         * expression supported by XOCL. Boolean expressions in XOCL may contain the following types of expression:
+	         *   A parameter expression requires all objects bound by a referenced parameter to be in a given state.
+	         *   A unary expression negates another expression using the logical negation operator.
+	         *   A binary expression combines two other expresions using logical conjunction or disjunction operators.
+	         *   A function expression evaluates a function over a parameter or over another function. The only function 
+	         *     currently supported is exists(), which takes a parameter as an argument, and returns true if and only 
+	         *     if all of the objects bound to the parameter exist.
+	         */
+            if (order[Order.Prepared])
+            {
+            	/*
+            	 * A workflow can call another workflow, passing arguments and binding process roles positionally.
+            	 */
+                workflow OrderShipment(order) 
+                {
+                	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
+                }
+            }
+	    }
+	    
         postconditions
         {
           success(orderToFulfill[Order.Shipped])
           failure(orderToFulfill[Order.Cancelled])
-        }
-    }
-    
-    // A workflow implements a process and may have variants
-    workflow StandardFulfillOrder implements FulfillOrder
-    {
-    	// This call maps workflow variants to transaction variants - 
-    	// For process variant1, the workflow calls transaction variant A 
-    	// For process variant2, the workflow calls transaction variant B
-        transaction OrderCreated<FulfillOrder.variant1, FulfillOrder.variant2>
-        {   	
-        	roles(FulfillOrder.OrderManager, FulfillOrder.OrderFulfiller)
-        }
-        
-        // A transaction call can pass parameters to the transaction
-        transaction PrepareOrder(FulfillOrder.order)
-        {
-        	// A transaction call aLso maps workflow roles to transaction roles - 
-        	// OrderManager is the sender and OrderFulfiller is the receiver     
-        	roles(FulfillOrder.OrderFulfiller, FulfillOrder.WarehouseManager)
-        }
-        
-        // This action splits the workflow into two or more parallel branches
-        any 
-        {
-        	// A branch may have an optional condition
-        	// The condition is defined in terms of a given process parameter being in a given state
-        	// This condition requires the parameter named order to be in state Order.Prepared
-        	// This branch runs if orderToFulfill is in state Order.Prepared
-            if(orderToFulfill[Order.Prepared])
-            {
-            	// A workflow can call another workflow
-                workflow StandardShipOrder(FulfillOrder.order) 
-                {
-                	// Roles in the calling process bind to roles in the called process
-                	roles(FulfillOrder.OrderManager, FulfillOrder.InventoryManager, FulfillOrder.ShippingManager, FulfillOrder.OfferManager)
-                }
-            }
         }
     }
 }
