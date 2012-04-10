@@ -1,13 +1,6 @@
 package com.x.webstore.v1{
 	
 	import com.x.core.v1.*
-
-    enum ContactStatus {
-		UNCONFIRMED,
-		ACTIVE,
-		UNSUBSCRIBED
-	}
-	
 	
     record WebStore{
     	string webStoreName;
@@ -23,18 +16,8 @@ package com.x.webstore.v1{
 		CurrencyAmount currentPrice;
 		long quantity;
 		string sku;
-		string? webStoreName;
 		string webStoreId;
 	}
-	
-	enum CustomerAddressType {
-		BILLING,
-		SHIPPING,
-		BILLING_AND_SHIPPING
-	}
-
-
-	
 	    
     record GetAllWebStoreProvider {
 
@@ -62,7 +45,7 @@ package com.x.webstore.v1{
 	
 	
 	record SearchWebStoreOffer{
-    	string? webStoreName;
+  
     	string? webStoreId;
 		
 		/* When this field is present, get all customers modified since this date that also match the other criteria */

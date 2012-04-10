@@ -15,7 +15,7 @@ package com.x.webstore.v1{
 				transaction GetAllWebStoreProvider 
 				{
 					roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
-				}
+				} 
 			}
 			transaction GetAllWebStore
 			{
