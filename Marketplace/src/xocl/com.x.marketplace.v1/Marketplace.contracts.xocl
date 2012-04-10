@@ -13,15 +13,15 @@ package com.x.marketplace.v1{
     			   		
 	   		//Marketplace  roles 
 	   		MarketplaceSetup.MarketplaceMetadataProvider
-	   		PolicyGroupCreation.MarketplacePolicyManager<Marketplace>
-	   		PolicyGroupUpdate.MarketplacePolicyManager<Marketplace> 
-	   		PolicyGroupDeletion.MarketplacePolicyManager<Marketplace> 
-	   		PolicyGroupLookup.MarketplacePolicyManager<Marketplace> 
-	   		OfferPublication.Marketplace<Marketplace> 
+	   		PolicyGroupCreation.MarketplacePolicyManager
+	   		PolicyGroupUpdate.MarketplacePolicyManager 
+	   		PolicyGroupDeletion.MarketplacePolicyManager 
+	   		PolicyGroupLookup.MarketplacePolicyManager 
+	   		OfferPublication.Marketplace 
 	   		OfferDeactivation.Marketplace
-	   		PublishedOfferRevision.Marketplace<Marketplace>
-	   		PublishedOfferRevocation.Marketplace<Marketplace>
-	   		OfferSearch.Marketplace<Marketplace>
+	   		PublishedOfferRevision.Marketplace
+	   		PublishedOfferRevocation.Marketplace
+	   		OfferSearch.Marketplace
 	   		StoreLookup.MarketplaceMarketplaceMetadataProvider
 	   		AuthorizedAccountSearch.MarketplaceMetadataProvider
 	   		AuthorizationRevoke.MarketplaceMetadataProvider
