@@ -63,7 +63,6 @@ package com.x.example.v1
 	     * A workflow may have an optional timeout, specified in square brackets.
 		 * A timeout starts when the first transaction called directly or indirectly by the workflow starts.
 		 * The unit for a timeout may be 's' for seconds, 'm' for minutes, 'h' for hours, or 'd' for days.
-		 * If the timeout expires, the fabric must send cancellations to abort all transactions in progress.
     	 */ 
     	 
     	/*
@@ -211,6 +210,12 @@ package com.x.example.v1
             	{
             		roles(OrderManager, OrderObserver)
             	}
+            } else
+            {
+            	/*
+            	 * The boolean statements success and failure are valid actions and may appear in any workflow block.
+            	 */
+            	failure
             }
 	    }
 	    
