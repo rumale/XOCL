@@ -50,14 +50,14 @@ package com.x.example.v1
 	    	/*
 	    	 * When the process fails, all referenced orders must be in state Order.Prepared.
 	    	 */
-	      	failure(order[Order.Prepared])
+	      	failure(order[Order.Cancelled])
         }
     }
     
     /*
      * A workflow implements a process the way a class implements an interface.
      */
-    workflow OrderShipment[2d] implements OrderShipment
+    workflow OrderShipment [2d] implements OrderShipment
     {
     	/*
 	     * A workflow may have an optional timeout, specified in square brackets.
@@ -89,7 +89,7 @@ package com.x.example.v1
     	 * Like all other blocks, a do block may have an optional timeout, specified in square brackets.
     	 * The format and semantics of a block timeout are the same as for a workflow timeout.
     	 */
-		 do(1)[1d]
+		 do [1d]
 		 {
 			/*
 			 * The following action is an any block, which lets one or more nested actions run in parallel.
@@ -143,25 +143,24 @@ package com.x.example.v1
         
         roles(OrderManager, OrderObserver, InventoryManager, WarehouseManager, ShippingManager, OfferManager)
         
-        preconditions(orderToFulfill[Order.Created])
+        preconditions(order[Order.Created])
         
 		/*
 		 * A single default workflow with the same name as the process may be specified within a process.
 		 */
-	    workflow[5d]
+	    workflow [5d]
 	    {
-	    	/*
-	    	 * This transaction call maps workflow variants to transaction variants - 
-	    	 *   For process variant WithCreationMetadata, the workflow calls the first transaction variant. 
-	    	 *   For process variant WithAuthorization, the workflow calls the second transaction variant.
-	    	 */
-			
 			/*
 			 * An all block is like an any block, except that it succeeds only when all of the nested actions 
 			 *   succeed, and fails when any of them fail. Actions in an all block must occur.
 			 */
-	    	all[1d]
+	    	all [1d]
 	    	{
+		    	/*
+		    	 * This transaction call maps workflow variants to transaction variants - 
+		    	 *   For process variant WithCreationMetadata, the workflow calls the first transaction variant. 
+		    	 *   For process variant WithAuthorization, the workflow calls the second transaction variant.
+		    	 */
 		        transaction OrderCreated<OrderFulfillment.WithCreationMetadata, OrderFulfillment.WithAuthorization>
 		        {
 		        	roles(OrderManager, OrderObserver)
@@ -173,6 +172,29 @@ package com.x.example.v1
 		        }
 	        }
 	        
+        	/*
+        	 * A one block succeeds when any of the nested actions succeeds. Only one of the actions in a one block 
+        	 *   may occur. In this example, the order manager may ship the order or cancel it and notify observers.
+        	 */
+	        one [3d]
+	        {     
+            	/*
+            	 * A workflow can call another workflow, passing arguments and binding process roles positionally.
+            	 */
+                workflow OrderShipment(order) 
+                {
+                	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
+                }
+        	
+				/*
+				 * The order manager informs observers that the order was cancelled
+				 */
+				transaction OrderCancelled
+				{
+				   	roles(OrderManager, OrderObserver)
+				}
+			}	
+
 	        /*
 	         * An if block lets a sequence of nested actions run conditionally. The condition is any type of boolean 
 	         * expression supported by XOCL. Boolean expressions in XOCL may contain the following types of expression:
@@ -183,22 +205,19 @@ package com.x.example.v1
 	         *     currently supported is exists(), which takes a parameter as an argument, and returns true if and only 
 	         *     if all of the objects bound to the parameter exist.
 	         */
-            if (order[Order.Prepared])
+            if (order[Order.Shipped])
             {
-            	/*
-            	 * A workflow can call another workflow, passing arguments and binding process roles positionally.
-            	 */
-                workflow OrderShipment(order) 
-                {
-                	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
-                }
+            	transaction OrderShipped
+            	{
+            		roles(OrderManager, OrderObserver)
+            	}
             }
 	    }
 	    
         postconditions
         {
-          success(orderToFulfill[Order.Shipped])
-          failure(orderToFulfill[Order.Cancelled])
+          success(order[Order.Shipped])
+          failure(order[Order.Cancelled])
         }
     }
 }

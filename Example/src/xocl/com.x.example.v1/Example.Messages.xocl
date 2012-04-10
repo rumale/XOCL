@@ -40,7 +40,7 @@ package com.x.example.v1
     	 * A guid is a unique ID. The 'new' initializer supplies a new unique ID.
     	 * A guid maps to an AVDL string formatted as a GUID by the implementation.
     	 */
-		guid orderId = new
+		guid orderID = new
 
     	/*
     	 * This property has an enumerated type, so it is initialized with an enumeration literal.
@@ -92,6 +92,11 @@ package com.x.example.v1
     	map<fixed(256)> tokens
     }
 
+	record OrderCancelled 
+	{
+		guid orderID
+	}
+
 	/*
 	 * There are two types of query: search and lookup.
 	 *   A search takes explicitly supplied search criteria and returns an array of objects.
@@ -138,7 +143,7 @@ package com.x.example.v1
 	    /*
 	     * By convention, a lookup includes the ID of the object being requested.
 	     */
-        guid orderId;
+        guid orderID;
     }
  
     record LookupOrderSucceeded extends LookupOrder
@@ -201,6 +206,11 @@ package com.x.example.v1
     record ShipOrderFailed extends ShipOrder
     {
         array<Error> errors;
+    }
+    
+    record OrderShipped
+    {
+    	guid orderID;
     }
     
     record UpdateInventory

@@ -244,9 +244,9 @@ package com.x.example.v1
           	success(order[Order.Shipped]) 
           	
         	/*
-        	 * When the transaction fails, all referenced orders must be in state Order.Prepared.
+        	 * When the transaction fails, all referenced orders must be in state Order.Cancelled.
         	 */
-          	failure(order[Order.Prepared])
+          	failure(order[Order.Cancelled])
         }
     }
     
@@ -256,6 +256,10 @@ package com.x.example.v1
      */
     transaction UpdateInventory response
 
+    transaction OrderCancelled inform
+    
+    transaction OrderShipped inform
+    
     /*
 	 * A query is a two way transaction that has no side effects.
 	 * There are two types of query: search and lookup.
