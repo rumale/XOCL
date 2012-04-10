@@ -1,0 +1,64 @@
+package com.x.authz.v1{
+	
+	import com.x.authz.v1.*
+	import com.x.core.v1.*
+	
+	/*
+		Each implementation will requires a different set of
+		credential keys with its own name/value. Please
+		check the documentation for specific
+		requirements.
+		
+	*/
+	record Credential {
+		map<string> properties;
+	}
+	
+	record InitAuthorization {
+		//Only used if web-auth flow supports it
+		string? returnURL ;
+		string? cancelURL ;
+		string? environmentName ;
+		string? userMarketplaceId ;
+	}
+
+	record InitAuthorizationSucceeded {
+		string redirectURL;
+		string authId; //A unique identifier for the authorization
+
+		/*
+		 * Any extra credentials needed to proceed with the auth
+		 */
+	    Credential? cred ;
+	}
+	
+
+	record InitAuthorizationFailed {
+		//Only used if marketplace web-auth flow supports it
+		string? environmentName ;
+		string? userMarketplaceId ;
+		array<Error> errors;
+	}
+
+	record CompleteAuthorization {
+		string authId;
+		//any extra credentials needed to complete the process
+		Credential? cred ;
+	}
+
+	record  CompleteAuthorizationSucceeded  {
+		string authId;
+		string xAccountId;
+		string? userMarketplaceId ;
+	    long? authorizationExpiration ;
+	}
+
+
+	record CompleteAuthorizationFailed {
+		string? authId ;
+		//any extra credentials needed to complete the process
+		Credential? cred ;
+		array<Error> errors;
+	}
+	
+}
