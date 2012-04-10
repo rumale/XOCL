@@ -27,11 +27,12 @@ package com.x.customer.v1{
 		datetime? dateOfBirth;
 		string? company;
 		datetime dateCreated;
+		datetime lastModified;
 	}  
 	
     record Customer extends CustomerData{
-		guid id;   //REVIEW THIS.   GUID is created by the system that creates the record.	
-	}
+		guid id;   //GUID is created by the system that creates the record.	
+	} 
 	
 	record SearchCustomer{
 		
