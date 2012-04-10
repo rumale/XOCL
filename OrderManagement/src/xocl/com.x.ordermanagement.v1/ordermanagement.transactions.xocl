@@ -29,7 +29,7 @@ package com.x.ordermanagement.v1
 	}
 	
 	// Update the shipping tracking information for an order
-	transaction OrderShipped<SalesChannelOrder> notify
+	transaction OrderShipped<MarketplaceOrder> notify
 	{
 		sender
 		{
@@ -38,7 +38,7 @@ package com.x.ordermanagement.v1
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }
-            message<SalesChannelOrder> SalesChannelOrderShipped
+            message<MarketplaceOrder> MarketplaceOrderShipped
 			{
             	timeouts(receipt=30s, validation=3m)
             	retries=3
@@ -47,17 +47,17 @@ package com.x.ordermanagement.v1
 	}
     
     // Inform observers that an order was created
-    transaction OrderCreated<SalesChannelOrder> inform
+    transaction OrderCreated<MarketplaceOrder> inform
     {
         sender
         {
         	message OrderCreated
-        	message<SalesChannelOrder> SalesChannelOrderCreated
+        	message<MarketplaceOrder> MarketplaceOrderCreated
         }
     }
     
     // Cancel the content of an order
-	transaction CancelOrder<SalesChannelOrder>(Order order) response
+	transaction CancelOrder<MarketplaceOrder>(Order order) response
     {
         sender
         {
@@ -66,7 +66,7 @@ package com.x.ordermanagement.v1
         		timeouts(receipt=30s, response=3m)     		
         		retries=3
         	}
-        	message<SalesChannelOrder> CancelSalesChannelOrder
+        	message<MarketplaceOrder> CancelMarketplaceOrder
         	{
         		timeouts(receipt=30s, response=3m)     		
         		retries=3
@@ -79,13 +79,13 @@ package com.x.ordermanagement.v1
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }            
-        	success<SalesChannelOrder> CancelSalesChannelOrderSucceeded
+        	success<MarketplaceOrder> CancelMarketplaceOrderSucceeded
         	{
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }            
             failure CancelOrderFailed
-            failure<SalesChannelOrder> CancelSalesChannelOrderFailed
+            failure<MarketplaceOrder> CancelMarketplaceOrderFailed
         }
 		postconditions
 		{
@@ -94,11 +94,12 @@ package com.x.ordermanagement.v1
     }
     
     // Inform observers that an order was cancelled
-    transaction OrderCancelled inform
+    transaction OrderCancelled <MarketplaceOrder> inform
     {
         sender
         {
         	message OrderCancelled
+        	message <MarketplaceOrder> MarketplaceOrderCancelled
         }
     }
       

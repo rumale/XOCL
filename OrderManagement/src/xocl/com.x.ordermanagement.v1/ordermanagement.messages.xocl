@@ -142,12 +142,11 @@ package com.x.ordermanagement.v1 {
 		OrderStatus status
 		OrderLinePrice price
 			
-		//TODO dates?
-		string? dateCancelled = null
-		string? dateDelivered = null
-		string? dateShipped = null
-		string? dateReturned = null
-		string? dateInvoiced = null
+		datetime? dateCancelled = null
+		datetime? dateDelivered = null
+		datetime? dateShipped = null
+		datetime? dateReturned = null
+		datetime? dateInvoiced = null
 		
 		ShipTo destination
 	}
@@ -257,7 +256,7 @@ package com.x.ordermanagement.v1 {
 		string sourceId
 	}
 	
-	record SalesChannelOrderShipped extends OrderShipped
+	record MarketplaceOrderShipped extends OrderShipped
 	{
 		string accountId
 		string? siteCode = null		
@@ -268,7 +267,7 @@ package com.x.ordermanagement.v1 {
 		OrderData orderData
 	}
 	
-    record CreateSalesChannelOrder extends CreateOrder
+    record CreateMarketplaceOrder extends CreateOrder
 	{
 		string accountId
 		string? siteCode = null
@@ -302,7 +301,7 @@ package com.x.ordermanagement.v1 {
 		SimpleOrder simpleOrder
 	}
 	
-	record SalesChannelOrderCreated extends OrderCreated
+	record MarketplaceOrderCreated extends OrderCreated
 	{
 		string accountId
 		string? siteCode = null
@@ -313,7 +312,7 @@ package com.x.ordermanagement.v1 {
 		string orderNumber
 	}
 	
-	record CancelSalesChannelOrder extends CancelOrder
+	record CancelMarketplaceOrder extends CancelOrder
 	{
 		string accountId
 		string? siteCode = null
@@ -323,7 +322,7 @@ package com.x.ordermanagement.v1 {
 	{
 	}
 	
-	record CancelSalesChannelOrderSucceeded extends CancelOrderSucceeded
+	record CancelMarketplaceOrderSucceeded extends CancelOrderSucceeded
 	{
 		string accountId
 		string? siteCode = null
@@ -335,7 +334,7 @@ package com.x.ordermanagement.v1 {
 		array<Error> errors
 	}
 	
-	record CancelSalesChannelOrderFailed
+	record CancelMarketplaceOrderFailed
 	{
 		array<string> failedOrderNumbers
 		array<Error> errors
@@ -344,6 +343,11 @@ package com.x.ordermanagement.v1 {
 	record OrderCancelled 
 	{
 		array<SimpleOrder> cancelledOrders
+	}
+	
+	record MarketplaceOrderCancelled 
+	{
+		array<Order> cancelledOrders
 	}
 	
     record SearchOrder{
