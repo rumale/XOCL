@@ -6,7 +6,7 @@ package com.x.ebay.v1{
 	
     contract EBayMarketplace 
     {
-    	description "An adapter to a sales channel that is an online marketplace, such as eBay"
+    	description "An adapter to Ebay Marketplace"
     	
     	roles
     	{   		
