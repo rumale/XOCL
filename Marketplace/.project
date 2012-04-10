@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SalesChannel</name>
+	<name>Marketplace</name>
 	<comment></comment>
 	<projects>
+		<project>Authorization</project>
 		<project>Core</project>
+		<project>OrderManagement</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
