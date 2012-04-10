@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.x.ocl</groupId>
+	<artifactId>xocl-core-contract</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Core Contract</name>
+	<description>
+	An core contract
+	</description>
+	<scm>
+		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk</connection>
+	</scm>
+
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<id>xcommerce</id>
+			<name>x.commerce</name>
+			<url>http://maven.corp.x.com:8080/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>ontologydeploy</id>
+			<name>Ontology release repository</name>
+			<url>http://maven.corp.x.com:8080/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>ontologydeploy</id>
+			<name>Ontology snapshot repository</name>
+			<url>http://maven.corp.x.com:8080/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.6.3</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/xocl</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>com.x.ocl</groupId>
+				<artifactId>xocl-maven-plugin</artifactId>
+				<version>0.0.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xocltoavdl</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>src/xocl/com.x.core.v1</sourceDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>protocol</goal>
+							<goal>idl-protocol</goal>
+							<goal>schema</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
