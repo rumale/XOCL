@@ -45,12 +45,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro</artifactId>
-			<version>1.6.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.x.ocl</groupId>
 			<artifactId>xocl-core-contract</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
@@ -95,6 +89,7 @@
 						</goals>
 						<configuration>
 							<sourceDirectory>src/xocl/com.x.example.v1</sourceDirectory>
+							<xocltoavdl.output>${project.build.directory}/avro-gen</xocltoavdl.output>
 						</configuration>
 					</execution>
 				</executions>
@@ -111,6 +106,9 @@
 							<goal>idl-protocol</goal>
 							<goal>schema</goal>
 						</goals>
+						<configuration>
+							<sourceDirectory>${project.build.directory}/avro-gen</sourceDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
