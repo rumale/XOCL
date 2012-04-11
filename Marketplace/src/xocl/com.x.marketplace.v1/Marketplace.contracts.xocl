@@ -1,5 +1,4 @@
 package com.x.marketplace.v1{
-	import com.x.ebay.v1.*
 	import com.x.marketplace.v1.*
 	import com.x.ordermanagement.v1.*
 	import com.x.authz.v1.*
@@ -22,7 +21,6 @@ package com.x.marketplace.v1{
 	   		PublishedOfferRevision.Marketplace
 	   		PublishedOfferRevocation.Marketplace
 	   		OfferSearch.Marketplace
-	   		StoreLookup.MarketplaceMarketplaceMetadataProvider
 	   		AuthorizedAccountSearch.MarketplaceMetadataProvider
 	   		AuthorizationRevoke.MarketplaceMetadataProvider
 	   
