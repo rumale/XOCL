@@ -23,7 +23,7 @@ package com.x.inventory.v1
 		
 		roles(StockItemConsumer, InventoryManager, InventoryObserver)
 		
-		preconditions(stockItem[StockItem.Created])
+		preconditions(exists(stockItem))
 	
 		workflow
 		{
@@ -54,7 +54,7 @@ package com.x.inventory.v1
 		
 		postconditions
 		{
-			success(stockItem[StockItem.Created])
+			success(exists(stockItem))
 		}
 	}
 }

@@ -3,11 +3,6 @@ package com.x.inventory.v1
 	import com.x.inventory.v1.*
 	
 	entity StockItem
-	{
-    	state New[Created]
-    	state Created[Deleted]
-    	state Deleted	
-    }
 	
 	transaction LookupStockItem query
     {
