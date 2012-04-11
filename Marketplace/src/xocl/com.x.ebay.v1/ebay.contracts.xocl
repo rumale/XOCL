@@ -21,10 +21,12 @@ package com.x.ebay.v1{
 	   		PublishedOfferRevision.Marketplace<Ebay>
 	   		PublishedOfferRevocation.Marketplace
 	   		OfferSearch.Marketplace
-	   		StoreLookup.MarketplaceMarketplaceMetadataProvider
 	   		AuthorizedAccountSearch.MarketplaceMetadataProvider
 	   		AuthorizationRevoke.MarketplaceMetadataProvider
-	   
+	   		
+	   		//Ebay roles
+	        StoreLookup.MarketplaceMarketplaceMetadataProvider
+	        
 	   		//Order roles
 	   		ProcessMarketplaceOrder.Marketplace<MarketplaceOrder> 
 	   		
