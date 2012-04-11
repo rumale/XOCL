@@ -1,4 +1,4 @@
- package com.x.pim.v1 //1.0
+ package com.x.pim.v1 
 { 	
     import com.x.pim.v1.*
     
