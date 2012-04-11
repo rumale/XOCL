@@ -1,5 +1,4 @@
- 
-package com.x.pim.v1
+ package com.x.pim.v1 //1.0
 { 	
     import com.x.pim.v1.*
     
@@ -33,18 +32,37 @@ package com.x.pim.v1
 		}
 	}
 	
-	process ProductUpdate (Product product)
+	process ProductUpdate (Product product, StockKeepingUnit sku)
 	{
 		description "A product is updated in the PIM"
 		
 		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
 		
-		preconditions(product[Product.Created])	
+		preconditions(exists(product))	
 	
 		workflow
 		{
-			any
+			one
 			{
+
+				noop
+			
+				// A consumer asks the PIM to update a product.  An update, create, or delete of a SKU is considered a product update
+				transaction UpdateSKU(sku) 
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+
+				transaction CreateSKU(sku) 
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+				
+				transaction DeleteSKU(sku) 
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+		
 				// A consumer asks the PIM to update a product
 				transaction UpdateProduct
 				{
@@ -61,7 +79,7 @@ package com.x.pim.v1
 
 		postconditions
 		{
-			success(product[Product.Created])
+			success(exists(product))
 		}
 	}
 
@@ -71,7 +89,7 @@ package com.x.pim.v1
 		
 		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
 		
-		preconditions(product[Product.New])
+		preconditions(!exists(product))
 	
 		workflow 
 		{
@@ -83,18 +101,17 @@ package com.x.pim.v1
 				   	roles(ProductInformationConsumer,ProductInformationManager)
 				}
 			}
-			
-			// The PIM informs an observer that a product was created
-			transaction ProductCreated
-			{
-			   	roles(ProductInformationManager, ProductInformationObserver)
-			}
+				// The PIM informs an observer that a product was created
+				transaction ProductCreated
+				{
+			   		roles(ProductInformationManager, ProductInformationObserver)
+				}
 		}
 
 	    postconditions
 		{
-			success(product[Product.Created])
-			failure(product[Product.New])
+			success(exists(product))
+			failure(!exists(product))
 		}
 	}	
 
@@ -104,7 +121,7 @@ package com.x.pim.v1
 		
 		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
 		
-		preconditions(product[Product.Created])
+		preconditions(exists(product))
 	
 		workflow
 		{
@@ -126,8 +143,97 @@ package com.x.pim.v1
 		
 	    postconditions
 		{
-			success(product[Product.Deleted])
-			failure(product[Product.Created])
+			success(!exists(product))
+			failure(exists(product))
 		}
 	}
+	
+	process SKUUpdate (Product product, StockKeepingUnit sku)
+	{
+		description "A product is updated in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(exists(product), exists(sku))
+	
+		workflow
+		{
+			// The PIM informs an observer that a product was updated
+			transaction ProductUpdated
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+
+		postconditions
+		{
+			success(exists(product))
+		}
+	}
+
+	process ProductCreation (Product product)
+	{
+		description "A product is created in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(!exists(product))
+	
+		workflow 
+		{
+			any
+			{
+				// A consumer asks the PIM to create a product
+				transaction CreateProduct
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+			}
+			// The PIM informs an observer that a product was created
+			transaction ProductCreated
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+
+	    postconditions
+		{
+			success(exists(product))
+			failure(!exists(product))
+		}
+	}	
+
+    process ProductDeletion (Product product)
+    {
+		description "A product is deleted in the PIM"
+		
+		roles(ProductInformationConsumer, ProductInformationManager, ProductInformationObserver)
+		
+		preconditions(exists(product))
+	
+		workflow
+		{
+			any
+			{
+				// A consumer asks the PIM to delete a product
+				transaction DeleteProduct
+				{
+				   	roles(ProductInformationConsumer,ProductInformationManager)
+				}
+			}
+			
+			// The PIM informs an observer that a product was deleted
+			transaction ProductDeleted
+			{
+			   	roles(ProductInformationManager, ProductInformationObserver)
+			}
+		}
+		
+	    postconditions
+		{
+			success(!exists(product))
+			failure(exists(product))
+		}
+	}
+	
 }

@@ -1,13 +1,10 @@
-package com.x.pim.v1
+package com.x.pim.v1 //1.0
 {
 	import com.x.pim.v1.*
 	
     entity Product
-    {
-    	state New[Created]
-    	state Created[Deleted]
-    	state Deleted	
-    }
+    entity StockKeepingUnit
+
     
  	transaction SearchProduct query
     {
@@ -74,6 +71,7 @@ package com.x.pim.v1
         	message ProductDeleted
         }
     }
+    
     
     transaction UpdateProduct response
     {
@@ -164,4 +162,102 @@ package com.x.pim.v1
             }
         }
     }
+    
+        
+    transaction UpdateSKU (StockKeepingUnit sku)response
+    {
+    	preconditions(exists(sku))
+        sender
+        {
+        	message UpdateSKU
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success UpdateSKUSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure UpdateSKUFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction CreateSKU (StockKeepingUnit sku) response
+    {
+        preconditions(!exists(sku))
+        sender
+        {
+        	message CreateSKU
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success CreateSKUSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure CreateSKUFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+
+    }
+
+    transaction DeleteSKU (StockKeepingUnit sku) response
+    {
+        preconditions(exists(sku))
+        sender
+        {
+        	message DeleteSKU
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success DeleteSKUSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure DeleteSKUFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+        }
+    }
+    
+    
+    
 }

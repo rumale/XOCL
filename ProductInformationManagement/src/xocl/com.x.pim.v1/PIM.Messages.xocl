@@ -1,4 +1,4 @@
-package com.x.pim.v1
+package com.x.pim.v1 //1.0
 {
 	import com.x.core.v1.*
 	
@@ -8,9 +8,9 @@ package com.x.pim.v1
         string id;
     }
     
-    record ProductData 
+    record  ProductData
     {
-        // ID of the product type 
+    	// ID of the product type 
         string? productTypeId;
         // descriptive name
         array<LocalizedString>? name;
@@ -32,10 +32,10 @@ package com.x.pim.v1
         array<ProductAttributeValue>? attributes;
         // defines the ids of variation variables 
         array<string>? variationFactors;
-        // list of associated SKUs
-        array<SKU>? skuList;
+       	// list of associated SKUs
+        array<SKU>? skuList;   
     }
-    
+     
     record ProductAttributeValue
     {
     	string attributeId;
@@ -162,12 +162,17 @@ package com.x.pim.v1
         array<Error> errors;
     }
      
-	record SKU
+	record SKU extends SKUData
     {
       	//unique identifier of the SKU
-        string sku 
-        // ID of the product for this SKU 
-        string? productId;
+        string sku;
+        datetime lastModifiedDate; 
+    }
+    
+    record SKUData
+    {
+        // ID of the product for this SKU: note, this is required
+        string productId; //TODO: this is required now.
         // Manufacturer suggested retail price, override the field in Product
         CurrencyAmount? MSRP;
         // Minimal advertisement price, override the field in Product
@@ -177,6 +182,7 @@ package com.x.pim.v1
         // SKU specific images 
         array<Image>? images;     
     }
+    
     
     enum FilterType 
     {
@@ -230,7 +236,7 @@ package com.x.pim.v1
 
     record ProductUpdated
     {
-        array<Product> products;
+        array<Product> productChanges;
     }
     	
     record CreateProductWithId
@@ -279,4 +285,53 @@ package com.x.pim.v1
     {
         array<Product> products;
     }
+    
+    record CreateSKU
+    {
+        array<SKUData> sku;
+    }
+    
+    record CreateSKUFailed
+    {
+        array<SKU> skus;
+        array<Error> errors;
+    }
+
+    record CreateSKUSucceeded
+    {
+        array<SKU> sku;
+    }
+    
+    record UpdateSKU
+    {
+        array<SKU> skus;
+    }
+    
+    record UpdateSKUSucceeded
+    {
+        array<SKU> skus;
+    }
+ 
+    record UpdateSKUFailed
+    {
+        array<SKU> skus;
+        array<Error> errors;
+    }	
+    
+    record DeleteSKU
+    {
+        array<string> skus;
+    }
+    
+    record DeleteSKUSucceeded
+    {
+    	array<string> skus;
+    }
+
+    record DeleteSKUFailed
+    {
+        array<string> skus;
+        array<Error> errors;
+    }
+    
 }
