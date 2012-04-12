@@ -1,5 +1,5 @@
 
-package com.x.Acknowledgements.v1
+package com.x.core.v1
 {
     enum Reason {
         ReceiptTimedOut
