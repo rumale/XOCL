@@ -65,7 +65,7 @@ package com.x.inventory.v1
             failure UpdateStockItemFailed
             {
 				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
+            	timeouts(receipt=30s)
             	retries=3
             }
         }

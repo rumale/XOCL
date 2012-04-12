@@ -39,4 +39,68 @@ package com.x.webstore.v1{
 			}
 		}
 	}
+	
+	process WebStoreOfferCreation
+	{
+		description "Creating an offer in a web store"
+	
+		roles(WebStoreOfferConsumer,WebStoreOfferManager, WebStoreOfferObserver)
+	
+		workflow
+		{
+			any{
+				transaction CreateWebStoreOffer
+				{
+					roles(WebStoreOfferConsumer, WebStoreOfferManager)
+				}
+			}
+			transaction WebStoreOfferCreated
+			{
+				roles (WebStoreOfferManager, WebStoreOfferObserver)
+			}
+		}		
+	}
+	
+	process WebStoreOfferUpdate
+	{
+		description "Updating an offer in a web store"
+	
+		roles(WebStoreOfferConsumer,WebStoreOfferManager, WebStoreOfferObserver)
+	
+		workflow
+		{
+			any{
+				transaction UpdateWebStoreOffer
+				{
+					roles(WebStoreOfferConsumer, WebStoreOfferManager)
+				}
+			}
+			transaction WebStoreOfferUpdated
+			{
+				roles (WebStoreOfferManager, WebStoreOfferObserver)
+			}
+		}		
+	}
+	
+	process WebStoreOfferDeletion
+	{
+		description "Deleting an offer in a web store"
+	
+		roles(WebStoreOfferConsumer,WebStoreOfferManager, WebStoreOfferObserver)
+	
+		workflow
+		{
+			any{
+				transaction DeleteWebStoreOffer
+				{
+					roles(WebStoreOfferConsumer, WebStoreOfferManager)
+				}
+			}
+			transaction WebStoreOfferDeleted
+			{
+				roles (WebStoreOfferManager, WebStoreOfferObserver)
+			}
+		}		
+	}
+	
 }

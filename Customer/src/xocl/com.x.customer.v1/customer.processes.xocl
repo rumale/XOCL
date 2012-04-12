@@ -17,7 +17,6 @@ package com.x.customer.v1{
 		}
 	}
 	
-	//do we need lookup?
 	
 	//Implementer should assume that, if creating the customer, that he/she is opted-out for marketing purposes. 
 	//Implementer must check to see if the customer is already there before deciding to create or update  

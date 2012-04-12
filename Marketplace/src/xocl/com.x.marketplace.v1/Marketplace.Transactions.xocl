@@ -34,13 +34,13 @@ package com.x.marketplace.v1{
         {
         	success RevokeAuthorizationSucceeded
         	{
-            	timeouts(receipt=30s, validation=3m)
+            	timeouts(receipt=30s)
             	retries=3
             }
             
             failure RevokeAuthorizationFailed
             {
-            	timeouts(receipt=30s, validation=3m)
+            	timeouts(receipt=30s)
             	retries=3
             }
         }
@@ -156,30 +156,12 @@ package com.x.marketplace.v1{
         {
         	// One of these two messages must be sent back to the sender as a response
         	success CreatePolicyGroupSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
             success <Ebay>CreateEbayPolicyGroupSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
             
             failure CreatePolicyGroupFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
             failure <Ebay>CreateEbayPolicyGroupFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     
@@ -188,47 +170,21 @@ package com.x.marketplace.v1{
         sender
         {
         	message UpdatePolicyGroup
-        	{
-        		timeouts(receipt=30s, response=3m)     		
-        		// How many times should we retry if one of the timeouts expires? 
-        		retries=3
-        	}
+
             message <Ebay>UpdateEbayPolicyGroup
-        	{
-        		timeouts(receipt=30s, response=3m)     		
-        		// How many times should we retry if one of the timeouts expires? 
-        		retries=3
-        	}
 
         }
         receiver
         {
         	// One of these two messages must be sent back to the sender as a response
         	success UpdatePolicyGroupSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
             success<Ebay> UpdateEbayPolicyGroupSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
             
             failure UpdatePolicyGroupFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
             failure <Ebay>UpdateEbayPolicyGroupFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
         }
     }
     
@@ -247,18 +203,8 @@ package com.x.marketplace.v1{
         {
         	// One of these two messages must be sent back to the sender as a response
         	success DeletePolicyGroupSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
-            
+          
             failure DeletePolicyGroupFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     
@@ -320,7 +266,7 @@ package com.x.marketplace.v1{
             failure PublishOfferFailed
             {
 				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
+            	timeouts(receipt=30s)
             	retries=3
             }
         }
@@ -360,17 +306,8 @@ package com.x.marketplace.v1{
             }
             
             failure RevisePublishedOfferFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
             failure <Ebay> ReviseEbayPublishedOfferFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     
@@ -400,18 +337,8 @@ package com.x.marketplace.v1{
         {
         	// One of these two messages must be sent back to the sender as a response
         	success RevokePublishedOfferSucceeded
-        	{
-				// A success message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
-            
+    
             failure RevokePublishedOfferFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     

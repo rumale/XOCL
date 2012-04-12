@@ -95,11 +95,7 @@ package com.x.pim.v1
             }
             
             failure UpdateProductFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
+
         }
     }
     
@@ -118,18 +114,13 @@ package com.x.pim.v1
         {
         	// One of these two messages must be sent back to the sender as a response
         	success CreateProductSucceeded
-        	{
+        	 {       
 				// A success message does not have a response timeout
             	timeouts(receipt=30s, validation=3m)
             	retries=3
             }
             
             failure CreateProductFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
 
@@ -155,11 +146,6 @@ package com.x.pim.v1
             }
             
             failure DeleteProductFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     
@@ -187,11 +173,6 @@ package com.x.pim.v1
             }
             
             failure UpdateSKUFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     
@@ -218,13 +199,7 @@ package com.x.pim.v1
             }
             
             failure CreateSKUFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
-        }
-
+		}
     }
 
     transaction DeleteSKU (StockKeepingUnit sku) response
@@ -250,11 +225,6 @@ package com.x.pim.v1
             }
             
             failure DeleteSKUFailed
-            {
-				// A failure message does not have a response timeout
-            	timeouts(receipt=30s, validation=3m)
-            	retries=3
-            }
         }
     }
     

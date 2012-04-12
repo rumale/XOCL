@@ -2,7 +2,7 @@ package com.x.webstore.v1{
 	
 	import com.x.webstore.v1.*
 	
-
+	entity WebStoreOffer
     
     transaction GetAllWebStoreProvider broadcast query 
     {
@@ -61,7 +61,115 @@ package com.x.webstore.v1{
             failure SearchWebStoreOfferFailed  
         } 
     }
-	
+    
+    transaction CreateWebStoreOffer response
+    {
+        sender
+        {
+        	message CreateWebStoreOffer
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success CreateWebStoreOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure CreateWebStoreOfferFailed
+            {
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction DeleteWebStoreOffer response
+    {
+        sender
+        {
+        	message DeleteWebStoreOffer
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success DeleteWebStoreOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure DeleteWebStoreOfferFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+     transaction UpdateWebStoreOffer response
+    {
+        sender
+        {
+        	message UpdateWebStoreOffer
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success UpdateWebStoreOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure UpdateWebStoreOfferFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+   	transaction WebStoreOfferCreated inform
+   	{
+   		sender
+   		{
+   			message WebStoreOfferCreated
+   		}
+   	}
+   	
+   	transaction WebStoreOfferUpdated inform
+   	{
+   		sender
+   		{
+   			message WebStoreOfferUpdated
+   		}
+   	}
+   	
+   	transaction WebStoreOfferDeleted inform
+   	{
+   		sender
+   		{
+   			message WebStoreOfferDeleted
+   		}
+   	}
 
 
 }

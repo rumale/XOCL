@@ -1,6 +1,5 @@
 package com.x.marketplace.v1{
-	
-	import com.x.saleschannel.v1.*
+
 	import com.x.core.v1.*
 
 

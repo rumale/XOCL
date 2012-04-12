@@ -12,6 +12,11 @@ package com.x.webstore.v1{
 	
 	
 	record WebStoreOffer{
+		string offerId;
+	}
+	
+	
+	record WebStoreOfferData extends WebStoreOffer{
 		string url;
 		CurrencyAmount currentPrice;
 		long quantity;
@@ -72,6 +77,45 @@ package com.x.webstore.v1{
 	record SearchWebStoreOfferFailed{
 		array<Error> errors;
 		SearchWebStoreOffer request;
+	}
+	record CreateWebStoreOffer{
+		WebStoreOfferData offer;
+	}
+    record CreateWebStoreOfferSucceeded{
+		WebStoreOffer offer;
+	}
+	record CreateWebStoreOfferFailed{
+		WebStoreOfferData offer;
+		array<Error> errors;
+	}
+	record UpdateWebStoreOffer{
+		WebStoreOffer offer;
+	}
+    record UpdateWebStoreOfferSucceeded{
+		WebStoreOffer offer;
+	}
+	record UpdateWebStoreOfferFailed{
+		WebStoreOffer offer;
+		array<Error> errors;
+	}
+	record DeleteWebStoreOffer{
+		string offerId;
+	}
+	record DeleteWebStoreOfferSucceeded{
+		string offerId;
+	}
+	record DeleteWebStoreOfferFailed{
+		string offerId;
+		array<Error> errors;
+	}
+	record WebStoreOfferCreated{
+		WebStoreOffer offer;
+	}
+	record WebStoreOfferUpdated{
+		WebStoreOffer offer;
+	}
+	record WebStoreOfferDeleted{
+		WebStoreOffer offer;
 	}
 	
 
