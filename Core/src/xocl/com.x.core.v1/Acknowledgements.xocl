@@ -1,5 +1,5 @@
 /*
- * This set of records is used to control transactions.
+ * This set of record types is used to control transactions.
  */
 package com.x.core.v1
 {
@@ -21,8 +21,8 @@ package com.x.core.v1
     
     /*
      * This message is sent to cancel a transaction for one of the reasons listed above.
-     * The sender must set the X-XC-RESULT-CORRELATION-ID header to the ID of the message 
-     *   that started the transaction.
+     * The sender of this message must set the X-XC-RESULT-CORRELATION-ID header to the ID 
+     *   of the message that started the transaction.
      */
 	record TransactionCancelled {
 	    Reason reason // The reason for cancellation.
