@@ -1,0 +1,365 @@
+ 
+package com.x.marketplace.v3{
+	import com.x.marketplace.v3.*
+	import com.x.ebay.v3.*
+	
+	
+    transaction GetAllAuthorizedAccount query
+    {
+        sender
+        {
+        	message GetAllAuthorizedAccount
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	success GetAllAuthorizedAccountSucceeded
+        	failure GetAllAuthorizedAccountFailed          
+        } 
+    }
+    
+    transaction RevokeAuthorization response
+    {
+        sender
+        {
+        	message RevokeAuthorization
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	success RevokeAuthorizationSucceeded
+        	{
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+            
+            failure RevokeAuthorizationFailed
+            {
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+    entity PolicyGroup
+    
+     	
+ 	entity Offer
+    {
+    	state Created[Active]
+    	state Active[Inactive]	
+    	state Inactive
+    }
+    
+    transaction GetAllAvailableChannel broadcast query
+    {
+        sender
+        {
+        	message GetAllAvailableChannel 
+        	{
+        		 timeouts(response=30s)
+        		 //In a broadcast query, the client should wait for the entire timeout before assuming all available channels have responded     		
+        	}
+        }
+        receiver
+        {
+        	success GetAllAvailableChannelSucceeded                 	
+        	//No failure message in this case.  If the reciever cannot give channel/provider information, it should not return anything.  
+        } 
+    }
+    
+ 	transaction GetAllSite query
+    {
+        sender
+        {
+        	message GetAllSite
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+        	// A success message does not have a response timeout
+        	success GetAllSiteSucceeded           
+                    	
+        	// A failure message does not have a response timeout
+            failure GetAllSiteFailed
+        } 
+    }
+    
+ 	transaction LookupSiteMetadata query
+    {
+        sender
+        {
+        	message LookupSiteMetadata
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+        	// A success message does not have a response timeout
+        	success LookupSiteMetadataSucceeded   
+        	
+        	// A failure message does not have a response timeout
+            failure LookupSiteMetadataFailed
+        } 
+    }
+    
+    
+   
+    transaction SearchCategory query
+    {
+        sender
+        {
+        	message SearchCategory
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+        	// A success message does not have a response timeout
+        	success SearchCategorySucceeded         
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchCategoryFailed
+        } 
+    }
+    
+    transaction CreatePolicyGroup<Ebay> response
+    {
+        sender
+        {
+        	message CreatePolicyGroup
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        	message <Ebay> CreateEbayPolicyGroup
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success CreatePolicyGroupSucceeded
+
+            success <Ebay>CreateEbayPolicyGroupSucceeded
+            
+            failure CreatePolicyGroupFailed
+
+            failure <Ebay>CreateEbayPolicyGroupFailed
+        }
+    }
+    
+    transaction UpdatePolicyGroup<Ebay> response
+    {
+        sender
+        {
+        	message UpdatePolicyGroup
+
+            message <Ebay>UpdateEbayPolicyGroup
+
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success UpdatePolicyGroupSucceeded
+
+            success<Ebay> UpdateEbayPolicyGroupSucceeded
+            
+            failure UpdatePolicyGroupFailed
+
+            failure <Ebay>UpdateEbayPolicyGroupFailed
+
+        }
+    }
+    
+    transaction DeletePolicyGroup response
+    {
+        sender
+        {
+        	message DeletePolicyGroup
+        	{
+        		timeouts(receipt=30s, response=3m)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success DeletePolicyGroupSucceeded
+          
+            failure DeletePolicyGroupFailed
+        }
+    }
+    
+   
+    
+    transaction LookupPolicyGroup<Ebay> query
+    {
+        sender
+        {
+        	message LookupPolicyGroup
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	
+        	// A success message does not have a response timeout
+        	success LookupPolicyGroupSucceeded
+        	success <Ebay> LookupEbayPolicyGroupSucceeded
+        	                   	
+                    	
+        	// A failure message does not have a response timeout
+            failure LookupPolicyGroupFailed
+        } 
+    }
+    
+
+    
+    
+    
+    transaction PublishOffer<Ebay> response
+    {
+        sender
+        {
+        	message PublishOffer
+        	{
+        		timeouts(receipt=30s, response=3h)  		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        	message <Ebay> PublishEbayOffer
+        	{
+        		timeouts(receipt=30s, response=3h)  		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	//PublishOffers may take some time, and N succeeded messages may be returned.
+        	//Multiple requests may map to 1 response.   
+        	success PublishOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            failure PublishOfferFailed
+            {
+				// A failure message does not have a response timeout
+            	timeouts(receipt=30s)
+            	retries=3
+            }
+        }
+    }
+    
+    transaction RevisePublishedOffer<Ebay> response
+    {
+        sender
+        {
+        	message RevisePublishedOffer
+        	{
+        		timeouts(receipt=30s, response=2h)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        	message<Ebay> RevisePublishedEbayOffer
+        	{
+        		timeouts(receipt=30s, response=2h)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success RevisePublishedOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            success <Ebay> ReviseEbayPublishedOfferSucceeded
+        	{
+				// A success message does not have a response timeout
+            	timeouts(receipt=30s, validation=3m)
+            	retries=3
+            }
+            
+            failure RevisePublishedOfferFailed
+
+            failure <Ebay> ReviseEbayPublishedOfferFailed
+        }
+    }
+    
+    
+    transaction OfferDeactivated notify
+    {
+        sender
+        {
+        	message OfferDeactivated{
+        		timeouts(receipt=30s)   
+        	}
+        }
+    }
+            
+    transaction RevokePublishedOffer response
+    {
+        sender
+        {
+        	message RevokePublishedOffer
+        	{
+        		timeouts(receipt=30s, response=2h)     		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response
+        	success RevokePublishedOfferSucceeded
+    
+            failure RevokePublishedOfferFailed
+        }
+    }
+    
+    transaction SearchOffer query
+    {
+        sender
+        {
+        	message SearchOffer
+        	{
+        		 timeouts(response=30s)     		
+        	}
+        }
+        receiver
+        {
+        	// One of these two messages must be sent back to the sender as a response	 
+        	success SearchOfferSucceeded            	        
+                    	
+        	// A failure message does not have a response timeout
+            failure SearchOfferFailed
+        } 
+    }
+    
+    
+}
