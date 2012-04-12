@@ -28,7 +28,7 @@ package com.x.ebay.v1{
 	        StoreLookup.MarketplaceMarketplaceMetadataProvider
 	        
 	   		//Order roles
-	   		ProcessMarketplaceOrder.Marketplace<MarketplaceOrder> 
+	   		ProcessSalesChannelOrder.Marketplace<MarketplaceOrder> 
 	   		
 	   		//Auth roles
 	   		AuthorizationGrant.AuthorizationProvider

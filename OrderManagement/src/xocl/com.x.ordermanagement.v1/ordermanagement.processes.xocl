@@ -31,7 +31,7 @@ package com.x.ordermanagement.v1
     }
     
     
-    process ProcessMarketplaceOrder<MarketplaceOrder> 
+    process ProcessSalesChannelOrder<SalesChannelOrder> 
     {
         description "An order id submitted for processing and is shipped or cancelled"
         
@@ -41,7 +41,7 @@ package com.x.ordermanagement.v1
 	    {
 	    	all{
 	   			// Notify observers that an order was created
-	       	    transaction OrderCreated<MarketplaceOrder>
+	       	    transaction OrderCreated<SalesChannelOrder>
 	        	{
 	        		roles(Marketplace, OrderObserver)
 	       		 }
@@ -60,7 +60,7 @@ package com.x.ordermanagement.v1
 	        one
 	        {     
 	        	// An order processor updates shipment tracking information for an order
-	        	transaction OrderShipped<MarketplaceOrder>
+	        	transaction OrderShipped<SalesChannelOrder>
 	        	{
 	        		roles(OrderProcessor, Marketplace)
 	        	}
@@ -70,14 +70,14 @@ package com.x.ordermanagement.v1
 		        	any
 		        	{
 						// A canceller asks the processer to cancel its order 
-						transaction CancelOrder<MarketplaceOrder>
+						transaction CancelOrder<SalesChannelOrder>
 						{
 						   	roles(Marketplace, OrderProcessor)
 						}
 					}
 					
 					// The order processor informs observers that an order was cancelled
-					transaction OrderCancelled<MarketplaceOrder>
+					transaction OrderCancelled<SalesChannelOrder>
 					{
 					   	roles(OrderProcessor, OrderObserver)
 					}
