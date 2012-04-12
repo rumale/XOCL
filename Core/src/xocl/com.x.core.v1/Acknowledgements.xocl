@@ -1,0 +1,21 @@
+
+package com.x.Acknowledgements.v1
+{
+    enum Reason {
+        ReceiptTimedOut
+        ReceiptOutOfSequence
+        ValidationTimedOut
+        ValidationOutOfSequence
+        ValidationError
+        ResponseTimedOut
+        ResponseOutOfSequence
+        MessageOutOfSequence
+    }
+	record TransactionCancelled {
+	    Reason reason
+	}
+	
+	record MessageReceived {}
+	
+	record MessageValidated {}
+}
