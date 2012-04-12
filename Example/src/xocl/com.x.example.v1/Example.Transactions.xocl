@@ -230,6 +230,13 @@ package com.x.example.v1
          */
         preconditions(order[Order.Prepared])
         
+        sender {
+        	message ShipOrder
+        }
+        receiver {
+        	success ShipOrderSucceeded
+        	failure ShipOrderFailed
+        }
         /*
          * All success postconditions must be true when the transaction succeeds.
          * All failure postconditions must be true when the transaction fails.
@@ -254,11 +261,27 @@ package com.x.example.v1
      * The entire transaction body is optional.
      * By default, a transaction has no variants or parameters, and no pre or post conditions. 
      */
-    transaction UpdateInventory response
+    transaction UpdateInventory response {
+    	sender {
+    		message UpdateInventory
+    	}
+    	receiver {
+    		success UpdateInventorySuccess
+    		failure UpdateInventoryFailure
+    	}
+    }
 
-    transaction OrderCancelled inform
+    transaction OrderCancelled inform {
+    	sender {
+    		message OrderCancelled
+    	}
+    }
     
-    transaction OrderShipped inform
+    transaction OrderShipped inform {
+    	sender {
+    		message OrderShipped
+    	}
+    }
     
     /*
 	 * A query is a two way transaction that has no side effects.
@@ -268,7 +291,7 @@ package com.x.example.v1
 	 * By convention, they use the naming pattern Search<noun> and Lookup<noun>, respectively.
 	 * By default, a query has no acknowledgements or retries.
 	 */
- 	transaction SearchProduct query
+ 	transaction SearchOrder query
     {
         sender
         {
