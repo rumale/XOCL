@@ -1,0 +1,34 @@
+package com.x.cart.v1{
+	import com.x.webstore.v1.*
+	import com.x.customer.v1.*
+	import com.x.ordermanagement.v1.*
+	import com.x.inventory.v1.*
+	import com.x.pim.v1.*
+	
+    contract MagentoCommerce 
+    {
+    	// A description defines the purpose of the contract
+    	description "Magento Commerce"
+    	
+    	// A set of roles collectivley define the implementer's responsibilities
+    	roles
+    	{
+	        CustomerSearch.CustomerManager
+	        CustomerSearch.CustomerManager<Email>
+	 		ProcessSalesChannelOrder.CustomerManager
+	 		WebStoreMetadataProvision.WebStoreMetadataProvider
+	 		WebStoreOfferSearch.WebStoreOfferManager
+	 		OrderSearch.OrderManager<NonSensitive>
+	 		ProcessSalesChannelOrder.OrderProcessor<SalesChannelOrder> 
+	 		StockItemLookup.InventoryManager
+	 		StockItemUpdate.InventoryManager
+	 		ProductSearch.ProductInformationManager
+	 		ProductLookup.ProductInformationManager
+	 		ProductUpdate.ProductInformationManager
+	 		ProductCreation.ProductInformationManager
+	 		ProductDeletion.ProductInformationManager	  
+	    }
+	    
+	 }
+	
+}
