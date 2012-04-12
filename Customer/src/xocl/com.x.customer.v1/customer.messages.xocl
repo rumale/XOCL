@@ -56,16 +56,9 @@ package com.x.customer.v1{
 	
 	record SearchCustomerSucceeded{
 		
-		array<Customer> customers;
-		/**
-		 * The total number of items found by the data provider.
-		 * This field will be filled in by the result provider when supported.
-		 * Requester should not fill this out.
-		 */
-		 datetime? modifiedSince;
+	     array<Customer> customers;
 		 long totalItemsFound;
-		 long? itemsRequested;
-		 long? startItemIndex;
+		 SearchCustomer request;
 	}
 	
 
@@ -75,8 +68,6 @@ package com.x.customer.v1{
 		Email email;
 		
 		datetime lastModifiedDate;
-		
-		//ContactStatus status;  not there in magento?
 	}
 	
 
@@ -84,33 +75,16 @@ package com.x.customer.v1{
 	record SearchEmailCustomerSucceeded{
 		
 		array<CustomerEmail> customers;
-		/**
-		 * The total number of items found by the data provider.
-		 * This field will be filled in by the result provider when supported.
-		 * Requester should not fill this out.
-		 */
-		 datetime? modifiedSince;
-		 long totalItemsFound;
-		 long? itemsRequested;
-		 long? startItemIndex;
+		long totalItemsFound;
+		SearchCustomer request;
+
 	}
 	
 	record SearchCustomerFailed{
-		/* When this field is present, get all customers modified since this date that also match the other criteria */
-		datetime? modifiedSince;
-		
-		/**
-		 * Restrict the number of items return to this many or less.
-		 * When null, it is assumed there is no restriction
-		 */
-		long? itemsRequested;
-		
-		/**
-		 * Return the results starting from this zero-based index.
-		 * When null, items will be returned started from the first item
-		 */
-		long? startItemIndex;
+		SearchCustomer request;
+		array<Error> errors;
 	}
+	
 	record CustomerCreated{
 		Customer data;
 	}

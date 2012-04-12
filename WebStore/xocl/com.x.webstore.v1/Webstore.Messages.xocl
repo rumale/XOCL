@@ -2,6 +2,11 @@ package com.x.webstore.v1{
 	
 	import com.x.core.v1.*
 	
+	enum OfferState{
+		PUBLISHED,
+		SUSPENDED
+	}
+	
     record WebStore{
     	string webStoreName;
     	string webStoreId;
@@ -10,11 +15,10 @@ package com.x.webstore.v1{
 		string url;
 	}
 	
-	
 	record WebStoreOffer{
 		string offerId;
+		OfferState offerState;
 	}
-	
 	
 	record WebStoreOfferData extends WebStoreOffer{
 		string url;
@@ -71,6 +75,7 @@ package com.x.webstore.v1{
 	
 	record SearchWebStoreOfferSucceeded{	
 		array<WebStoreOffer> webStoreOffers;
+		long totalItemsFound;
 		SearchWebStoreOffer request;
 	}
 	
