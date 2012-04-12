@@ -1,0 +1,12 @@
+package com.x.inventory.v1{	
+	import com.x.inventory.v1.*
+	
+    contract Inventory
+    {
+    		description "A standard Inventory system"
+    		roles{
+	 			StockItemLookup.InventoryManager
+	 			StockItemUpdate.InventoryManager
+	 		}
+	 }
+}	

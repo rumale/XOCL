@@ -1,0 +1,15 @@
+package com.x.pim.v1{	
+	import com.x.pim.v1.*
+	
+    contract ProductInformationManagement
+    {
+    		description "A standard Product Information Management system"
+    		roles{
+		 		ProductSearch.ProductInformationManager
+		 		ProductLookup.ProductInformationManager
+	 			ProductUpdate.ProductInformationManager
+	 			ProductCreation.ProductInformationManager
+	 			ProductDeletion.ProductInformationManager
+	 		}
+	 }
+}	
