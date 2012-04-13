@@ -42,10 +42,10 @@ package com.x.inventory.v1
 	
 	record UpdateStockItemFailed
 	{
-		array<UpdateStockItemError> errors;
+		array<InventoryError> errors;
 	}
 
-	record UpdateStockItemError
+   record InventoryError
 	{
 		StockItem? stockItem;
 		array<Error> errors;
