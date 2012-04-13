@@ -6,8 +6,7 @@ package com.x.ordermanagement.v1 {
 	import com.x.ordermanagement.v1.* 
 	import com.x.core.v1.*
 	
-	enum OrderStatus 
-	{
+	enum OrderStatus {
 		NEW,
 		ON_HOLD,
 		BACKORDERED,
@@ -22,53 +21,46 @@ package com.x.ordermanagement.v1 {
 		PAID
 	}
 	
-	enum ShippingServiceType 
-	{
+	enum ShippingServiceType {
 		MERCHANT_SHIPPED,
 		DROP_SHIP,
 		SHIPPING_SERVICE,
 		WILL_CALL
 	}
 	
-	enum PromotionDiscountType 
-	{
+	enum PromotionDiscountType {
 		STOREWIDE_SALE,
 		SHIPPING_DISCOUNT,
 		PRODUCT_DISCOUNT,
 		OTHER
 	}
 	
-	record GiftTag 
-	{
+	record GiftTag {
 		string? from = null
 		string? to = null
 		string giftMessage
 	}
 	
-	record CustomerInfo 
-	{
-		Email email
+	record CustomerInfo {
 		Name name
-		Phone phone
+		Email? email
+		Phone? phone
 	}
 	
-	record PromotionalDiscount 
-	{
+	record PromotionalDiscount {
 		string code
 		string promoDescription
 		PromotionDiscountType type
 		CurrencyAmount amount
 	}
 	
-	record ShipTo 
-	{
+	record ShipTo {
 		Name name
 		Address address
 		GiftTag giftTag
 	}
 	
-	record Shipping 
-	{
+	record Shipping {
 		ShippingServiceType serviceType
 		string? carrierCode = null
 		
@@ -81,22 +73,19 @@ package com.x.ordermanagement.v1 {
 		string? shippingMessage = null
 	}
 	
-	record AdditionalCost 
-	{
+	record AdditionalCost {
 		string costDescription
 		CurrencyAmount amount
 	}
 	
-	record TrackingDetail 
-	{
+	record TrackingDetail {
 		string trackingNumber
 		string? carrier = null
 		string? service = null
 		ShippingServiceType serviceType
 	}
 	
-	record PaymentInfo 
-	{
+	record PaymentInfo {
 		PaymentMethod method
 
 		string datePaid
@@ -105,9 +94,8 @@ package com.x.ordermanagement.v1 {
 		string? transactionStatus = null
 	}
 		
-	record OrderLinePrice 
-	{
-		/** The total price the customer is paying for this line (sum of price, taxes, fess, additional costs, etc.) */
+	record OrderLinePrice {
+		/** The total price the customer is paying for this line (sum of price, taxes, fees, additional costs, etc.) */
 		CurrencyAmount totalPrice
 		
 		/** The price the customer is paying for this item (without taxes, fees, addtional costs, etc.) */
@@ -127,8 +115,7 @@ package com.x.ordermanagement.v1 {
 		array<AdditionalCost> additionalCosts
 	}
 
-	record SimpleOrderLineData 
-	{
+	record SimpleOrderLineData {
 		string? orderLineId = null
 		string? itemId = null
 		string? orderNumber = null
@@ -140,6 +127,8 @@ package com.x.ordermanagement.v1 {
 		OrderLinePrice unitPrice
 
 		OrderStatus status
+		
+		/** This is quantity * unit price */
 		OrderLinePrice price
 			
 		datetime? dateCancelled = null
@@ -151,8 +140,7 @@ package com.x.ordermanagement.v1 {
 		ShipTo destination
 	}
 	
-	record OrderLineData extends SimpleOrderLineData
-	{	
+	record OrderLineData extends SimpleOrderLineData {	
 		string? lineMessage = null
 		
 		boolean? bundle = false
@@ -162,8 +150,7 @@ package com.x.ordermanagement.v1 {
 		boolean? autoSubstitution = false
 	}
 
-	record OrderDetails 
-	{
+	record OrderDetails {
 		/** Unique identifier that is assigned by the originator of this order once created.*/
 		string? orderNumber 
 		
@@ -194,163 +181,141 @@ package com.x.ordermanagement.v1 {
 		
 		/** The id of the group that classifies source (web, print, email, etc.) */
 		string sourceGroupId
+		
+		/** An optional collection of related orders numbers */
+		array<string>? relatedOrderNumbers
 	}
 	
-	record SimpleOrder extends OrderDetails
-	{
+	record SimpleOrder extends OrderDetails {
 		array<SimpleOrderLineData> orderLines
 	}
 	
-	record OrderData extends NonSensitiveOrderData
-	{
+	record OrderData extends NonSensitiveOrderData {
 		CustomerInfo customer
 		Address billingAddress
 		
 		array<PaymentInfo> paymentMethods
 		
-		/** if not provided, use ShipTo info the associated OrderLine */
+		/** if not provided, use ShipTo in the associated OrderLine */
 		ShipTo destination
 		
 		string? purchaseOrder = null
 	}
 	
 	
-	record NonSensitiveOrderData extends OrderDetails
-	{
+	record NonSensitiveOrderData extends OrderDetails {
 		array<OrderLineData> orderLines
 		
 		/** The marketing source that referred this order */
 		string? referralSource = null
 	}
 	
-	record NonSensitiveOrder extends NonSensitiveOrderData{
-		string id
+	record NonSensitiveOrder extends NonSensitiveOrderData {
+		guid id
 	}
 	
-	record Order extends OrderData 
-	{
-		string id
+	record Order extends OrderData {
+		guid id
 	}
 	
-	record ProcessOrder 
-	{
+	record ProcessOrder {
 		OrderData order
 	}
 	
-	record ProcessOrderSucceeded
-	{
+	record ProcessOrderSucceeded {
 		Order order
 	}
 	
-	record ProcessOrderFailed
-	{
+	record ProcessOrderFailed {
 		OrderData order
 		array<Error> errors
 	}
 	
-	record OrderShipped 
-	{
+	record OrderShipped {
 		string orderNumber
 		string shipmentId
 		array<TrackingDetail>? trackingDetails = null
 		string sourceId
 	}
 	
-	record MarketplaceOrderShipped extends OrderShipped
-	{
+	record MarketplaceOrderShipped extends OrderShipped {
 		string accountId
 		string? siteCode = null		
 	}
 	
-    record CreateOrder
-	{
+    record CreateOrder {
 		OrderData orderData
 	}
 	
-    record CreateMarketplaceOrder extends CreateOrder
-	{
+    record CreateMarketplaceOrder extends CreateOrder {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record CreateOrderSucceeded
-	{
+	record CreateOrderSucceeded {
 		string orderNumber
 	}
 	
-	record SalesChannelCreateOrderSucceeded extends CreateOrderSucceeded
-	{
+	record SalesChannelCreateOrderSucceeded extends CreateOrderSucceeded {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record CreateOrderFailed
-	{
+	record CreateOrderFailed {
 		string orderNumber
 		array<Error> errors
 	}
 	
-	record SalesChannelCreateOrderFailed extends CreateOrderFailed
-	{
+	record SalesChannelCreateOrderFailed extends CreateOrderFailed {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record OrderCreated 
-	{
+	record OrderCreated {
 		SimpleOrder simpleOrder
 	}
 	
-	record MarketplaceOrderCreated extends OrderCreated
-	{
+	record MarketplaceOrderCreated extends OrderCreated {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record CancelOrder
-	{
-		string orderNumber
+	record CancelOrder {
+		array<string> orderNumbers
 	}
 	
-	record CancelMarketplaceOrder extends CancelOrder
-	{
+	record CancelMarketplaceOrder extends CancelOrder {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record CancelOrderSucceeded extends CancelOrder
-	{
+	record CancelOrderSucceeded extends CancelOrder {
 	}
 	
-	record CancelMarketplaceOrderSucceeded extends CancelOrderSucceeded
-	{
+	record CancelMarketplaceOrderSucceeded extends CancelOrderSucceeded {
 		string accountId
 		string? siteCode = null
 	}
 	
-	record CancelOrderFailed
-	{
+	record CancelOrderFailed {
 		string orderNumber
 		array<Error> errors
 	}
 	
-	record CancelMarketplaceOrderFailed
-	{
+	record CancelMarketplaceOrderFailed {
 		array<string> failedOrderNumbers
 		array<Error> errors
 	}
 	
-	record OrderCancelled 
-	{
+	record OrderCancelled {
 		array<SimpleOrder> cancelledOrders
 	}
 	
-	record MarketplaceOrderCancelled 
-	{
+	record MarketplaceOrderCancelled {
 		array<Order> cancelledOrders
 	}
 	
-    record SearchOrder{
+    record SearchOrder {
     	
 		datetime? lastModified;
 		/**
@@ -366,15 +331,35 @@ package com.x.ordermanagement.v1 {
 		long? startItemIndex;
 	}	
 
-	record SearchOrderSucceeded{
+	record SearchOrderSucceeded {
 		array<Order> orders;	
-		SearchOrder search;
-	}	
-	record SearchNonSensitiveOrderSucceeded{
-        array<NonSensitiveOrder> orders;		
-		SearchOrder search;
+
+		/**
+		 * The total number of items found by the data provider.
+		 * This field will be filled in by the result provider when supported.
+		 * Requester should not fill this out.
+		 */
+		 datetime? modifiedSince;
+		 long totalItemsFound;
+		 long? itemsRequested;
+		 long? startItemIndex;
 	}
-	record SearchOrderFailed{
+	
+	record SearchNonSensitiveOrderSucceeded {
+        array<NonSensitiveOrder> orders;
+        	
+		/**
+		 * The total number of items found by the data provider.
+		 * This field will be filled in by the result provider when supported.
+		 * Requester should not fill this out.
+		 */
+		 datetime? modifiedSince;
+		 long totalItemsFound;
+		 long? itemsRequested;
+		 long? startItemIndex;
+	}
+	
+	record SearchOrderFailed {
 		SearchOrder search;
 		array<Error> errors;
 	}
