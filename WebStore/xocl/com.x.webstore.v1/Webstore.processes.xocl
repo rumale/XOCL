@@ -17,10 +17,19 @@ package com.x.webstore.v1{
 					roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
 				} 
 			}
-			transaction GetAllWebStore
-			{
-				roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
+			any{
+				transaction GetAllWebStore
+				{
+					roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
+				}	
 			}
+			any{
+				transaction GetAllCategories
+				{
+					roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
+				}
+			}
+			
 		}
 	}
 	

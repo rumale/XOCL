@@ -26,8 +26,26 @@ package com.x.webstore.v1{
 		long quantity;
 		string sku;
 		string webStoreId;
+		array<string>? categoryId;
 	}
-	    
+	
+	record Category {
+		string id;
+		string name;
+		string parentId
+		string? categoryUrl;
+	}
+	record GetAllCategory{
+		string webStoreId;
+	}  
+	record GetAllCategorySucceeded{
+		string webStoreId;
+		array<Category> categories;
+	} 
+	record GetAllCategoryFailed{
+		string webStoreId;
+		array<Error> errors;
+	}    
     record GetAllWebStoreProvider {
 
 	}
