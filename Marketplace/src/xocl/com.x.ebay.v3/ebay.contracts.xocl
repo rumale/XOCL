@@ -1,4 +1,4 @@
-package com.x.ebay.v3{
+package com.x.ebaycontract.v3{
 	import com.x.ebay.v3.*
 	import com.x.marketplace.v3.*
 	import com.x.ordermanagement.v1.*
