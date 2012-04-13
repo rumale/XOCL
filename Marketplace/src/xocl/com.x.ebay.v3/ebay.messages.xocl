@@ -54,7 +54,7 @@
 		boolean? useTaxTable;
 	}
 	
-	record EbayPolicyGroup extends EbayPolicyGroup{
+	record EbayPolicyGroup extends PolicyGroup{
 			string policyGroupId;
 	}	
 
@@ -69,7 +69,7 @@
 	}
 
 	record PublishEbayOfferFailed {
-		OfferPublicationError error;
+		OfferPublicationError offerError;
 		string? policyGroupId;
 	}
 	

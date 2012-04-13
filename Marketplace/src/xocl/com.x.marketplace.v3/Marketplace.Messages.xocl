@@ -439,7 +439,7 @@ package com.x.marketplace.v3{
 	}
 
 	record PublishOfferFailed {
-		OfferPublicationError error;
+		OfferPublicationError offerError;
 		string? policyGroupId;
 	}
 	
@@ -474,7 +474,7 @@ package com.x.marketplace.v3{
 	}
 
 	record RevokePublishedOfferFailed {
-		CancelOfferError error;
+		CancelOfferError cancelError;
 		string? policyGroupId;
   	}
   	
