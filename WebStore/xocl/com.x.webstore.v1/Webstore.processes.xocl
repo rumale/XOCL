@@ -75,7 +75,8 @@ package com.x.webstore.v1{
 					roles(WebStoreOfferConsumer, WebStoreOfferManager)
 				}
 			}
-			one{
+			any{ //it's possible an update may cause none or both of these events to happen
+				noop
 				transaction WebStoreOfferQuantityUpdated
 				{
 					roles (WebStoreOfferManager, WebStoreOfferObserver)
