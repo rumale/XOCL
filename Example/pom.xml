@@ -46,7 +46,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>xocl-core-contract</artifactId>
+			<artifactId>core-xocl-contract</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
@@ -80,7 +80,7 @@
 			<plugin>
 				<groupId>com.x.ocl</groupId>
 				<artifactId>xocl-maven-plugin</artifactId>
-				<version>0.0.2-SNAPSHOT</version>
+				<version>1.2.0</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
