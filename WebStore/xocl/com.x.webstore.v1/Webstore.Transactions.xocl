@@ -147,7 +147,7 @@ package com.x.webstore.v1{
         }
     }
     
-   	transaction WebStoreOfferCreated inform
+   	transaction WebStoreOfferCreated notify
    	{
    		sender
    		{
@@ -155,15 +155,23 @@ package com.x.webstore.v1{
    		}
    	}
    	
-   	transaction WebStoreOfferUpdated inform
+   	transaction WebStoreOfferPriceUpdated notify
    	{
    		sender
    		{
-   			message WebStoreOfferUpdated
+   			message WebStoreOfferPriceUpdated
    		}
    	}
    	
-   	transaction WebStoreOfferDeleted inform
+   	transaction WebStoreOfferQuantityUpdated notify
+   	{
+   		sender
+   		{
+   			message WebStoreOfferQuantityUpdated
+   		}
+   	}
+   	
+   	transaction WebStoreOfferDeleted notify
    	{
    		sender
    		{

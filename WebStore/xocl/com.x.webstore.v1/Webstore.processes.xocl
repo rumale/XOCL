@@ -75,9 +75,15 @@ package com.x.webstore.v1{
 					roles(WebStoreOfferConsumer, WebStoreOfferManager)
 				}
 			}
-			transaction WebStoreOfferUpdated
-			{
-				roles (WebStoreOfferManager, WebStoreOfferObserver)
+			one{
+				transaction WebStoreOfferQuantityUpdated
+				{
+					roles (WebStoreOfferManager, WebStoreOfferObserver)
+				}
+				transaction WebStoreOfferPriceUpdated
+			    {
+			    	roles (WebStoreOfferManager, WebStoreOfferObserver)
+			    }
 			}
 		}		
 	}

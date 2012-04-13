@@ -123,6 +123,15 @@ package com.x.webstore.v1{
 		WebStoreOffer offer;
 	}
 	
-
+    record WebStoreOfferPriceUpdated{
+	    string sku;
+		CurrencyAmount currentPrice;
+		string webStoreId;
+	}
 	
+    record WebStoreOfferQuantityUpdated{
+		string sku;
+		long quantity;
+		string webStoreId;
+	}
 }
