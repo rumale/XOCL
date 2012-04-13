@@ -1,6 +1,6 @@
- package com.x.ebay.v3{  
+ package com.x.marketplace.v3{  
  	
- 	import com.x.ebay.v3.*
+ 	import com.x.marketplace.v3.*
  		
 	process StoreLookup
 	{
