@@ -27,6 +27,19 @@
 			<url>http://maven.corp.x.com:8080/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>xcommerce</id>
+			<name>xcommerce</name>
+			<url>http://maven.corp.x.com:8080/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<distributionManagement>
 		<repository>
