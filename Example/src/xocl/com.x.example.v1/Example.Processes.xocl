@@ -165,9 +165,17 @@ package com.x.example.v1
 		        	roles(OrderManager, OrderObserver)
 		        }
 		        
-		        transaction PrepareOrder(order)
+		        /*
+		         * This transaction call is optional because the OrderManager and WarehouseManager rolse may 
+		         *   be played by same capability or by different capabilities. If they are different, then the 
+		         *   interaction will go over the wire, but if they are the same, then it will be internal.
+		         */
+		        any
 		        {
-		        	roles(OrderManager, WarehouseManager)
+			        transaction PrepareOrder(order)
+			        {
+			        	roles(OrderManager, WarehouseManager)
+			        }
 		        }
 	        }
 	        
@@ -178,13 +186,13 @@ package com.x.example.v1
 	        one [3d]
 	        {     
             	/*
-            	 * A workflow can call another workflow, passing arguments and binding process roles positionally.
+            	 * A workflow can call other workflows, passing arguments and binding process roles positionally.
             	 */
                 workflow OrderShipment(order) 
                 {
                 	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
                 }
-        	
+    	
 				/*
 				 * The order manager informs observers that the order was cancelled
 				 */

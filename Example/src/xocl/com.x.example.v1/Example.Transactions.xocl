@@ -81,10 +81,23 @@ package com.x.example.v1
 	 */
     transaction OrderCreated<WithCreationMetadata, WithAuthorization> notify 
     { 
+    	/*
+    	 * The sender of a notification or command must perform the following actions:
+    	 *   Send the appropriate message to start the transaction on the appropriate topic.
+		 *   If the contract requires receipt acknowledgement, wait for com.x.core.v1.MessageReceived 
+		 *       on topic com.x.core.v1/MessageReceived.
+		 *     If timeout occurs, retry
+		 *       If retries exhausted, give up.
+		 *   If the contract requires validation acknowledgement, wait for com.x.core.v1.MessageValidated 
+		 *       on topic com.x.core.v1/MessageValidated.
+		 *     If timeout occurs, retry
+		 *       If retries exhausted, send com.x.core.v1.TransactionCancelled to the receiver on topic 
+		 *         com.x.core.v1/TransactionCancelled with reason ValidationTimedOut.
+    	 */
         sender
         {        	
         	/*
-			 * The receiver of a notification can send acknowledgements to the sender.
+			 * The receiver of a notification or command must send acknowledgements to the sender.
 			 *   An acknowledgement must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 			 *   An acknowledgement must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
 			 * If an acknowledgement is received out of order, then the sender must send a cancellation
@@ -145,6 +158,21 @@ package com.x.example.v1
 	         */
         	message<WithAuthorization> OrderCreatedWithAuthorization "this_string/overrides_the_default/topic_name"
         }
+        
+        /*
+         * The receiver of a notification or command must perform the following actions:
+		 *   Receive the incoming message on the appropriate topic.
+		 *   If the contract requires receipt acknowledgement, send com.x.core.v1.MessageReceived to the 
+		 *     sender on topic com.x.core.v1/MessageReceived.
+		 *   Call domain logic to validate the contents of the message
+		 *   If validation succeeds
+		 *     If the contract requires validation acknowledgement, send com.x.core.v1.MessageValidated to the 
+		 *       sender on topic com.x.core.v1/MessageValidated.
+		 *   If validation fails
+		 *     Send com.x.core.v1.TransactionCancelled to the sender on topic com.x.core.v1/TransactionCancelled 
+		 *       with reason ValidationError.
+         */
+        receiver
     }
     
     /*
@@ -153,12 +181,29 @@ package com.x.example.v1
      */
     transaction PrepareOrder response
     {
+    	/*
+    	 * After the actions required for a notification, the sender of a command must perform 
+    	 *     the following additional actions:
+		 *   Wait for the response on the appropriate topics.
+		 *     If timeout occurs, retry
+		 *       If retries exhausted, send com.x.core.v1.TransactionCancelled to the receiver on topic 
+		 *         com.x.core.v1/TransactionCancelled with reason ResponseTimedOut.
+		 *   If the contract requires receipt acknowledgement, send com.x.core.v1.MessageReceived to the  
+		 *     receiver on topic com.x.core.v1/MessageReceived.
+		 *   Call domain logic to validate the contents of the message
+		 *   If validation succeeds
+		 *     If the contract requires validation acknowledgement, send com.x.core.v1.MessageValidated to the 
+		 *       receiver on topic com.x.core.v1/MessageValidated.
+		 *   If validation fails
+		 *     Send com.x.core.v1.TransactionCancelled to the receiver on topic 
+		 *       com.x.core.v1/TransactionCancelled with reason ValidatonError.
+    	 */
         sender
         {
         	message PrepareOrder
         	{					
 				/*
-				 * The receiver of a two way transaction must send a response or a cancellation to the sender.
+				 * The receiver of a command must send a response or a cancellation to the sender.
 				 *   A response must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 				 *   A response must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
 				 * A response indicates whether the operation succeeded or failed and may contain additional data.
@@ -183,6 +228,21 @@ package com.x.example.v1
         	}
         }
         
+        /*
+    	 * After the actions required for a notification, the receiver of a command must perform 
+    	 *     the following additional actions:
+    	 *   Send the appropriate response to the sender on the appropriate topic.
+    	 *   If the contract requires receipt acknowledgement, wait for com.x.core.v1.MessageReceived 
+    	 *       on topic com.x.core.v1/MessageReceived.
+    	 *     If timeout occurs, retry
+    	 *       If retries exhausted, send com.x.core.v1.TransactionCancelled to the sender on topic 
+    	 *          com.x.core.v1/TransactionCancelled with reason ReceiptTimedOut.
+    	 *   If the contract requires validation acknowledgement, wait for com.x.core.v1.MessageValidated 
+    	 *       on topic com.x.core.v1/MessageValidated.
+    	 *     If timeout occurs, retry
+    	 *       If retries exhausted, send com.x.core.v1.TransactionCancelled to the sender on topic 
+    	 *         com.x.core.v1/TransactionCancelled with reason ValidationTimedOut.
+         */
         receiver
         {
         	/*
