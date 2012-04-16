@@ -1,15 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.x.ocl</groupId>
+		<artifactId>xocl-contracts</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
 	<groupId>com.x.ocl</groupId>
 	<artifactId>core-xocl-contract</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Core Contract</name>
+	<name>Core XOCL Contract</name>
 	<description>
-	A core contract
+		A core contract
 	</description>
 	<scm>
-		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk</connection>
+		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/Core</connection>
 	</scm>
 
 	<repositories>
@@ -27,19 +32,6 @@
 			<url>http://maven.corp.x.com:8080/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>xcommerce</id>
-			<name>xcommerce</name>
-			<url>http://maven.corp.x.com:8080/nexus/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<distributionManagement>
 		<repository>
@@ -56,60 +48,4 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro</artifactId>
-			<version>1.6.3</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<resources>
-			<resource>
-				<directory>src/xocl</directory>
-			</resource>
-			<resource>
-				<directory>${project.build.directory}/avro-gen</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>com.x.ocl</groupId>
-				<artifactId>xocl-maven-plugin</artifactId>
-				<version>1.2.0</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>xocltoavdl</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>src/xocl/com.x.core.v1</sourceDirectory>
-							<xocltoavdl.output>${project.build.directory}/avro-gen</xocltoavdl.output>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.avro</groupId>
-				<artifactId>avro-maven-plugin</artifactId>
-				<version>1.6.3</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>protocol</goal>
-							<goal>idl-protocol</goal>
-							<goal>schema</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>${project.build.directory}/avro-gen</sourceDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

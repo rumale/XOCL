@@ -24,7 +24,7 @@ package com.x.webstore.v1{
 				}	
 			}
 			any{
-				transaction GetAllCategories
+				transaction GetAllCategory
 				{
 					roles(WebStoreMetadataConsumer, WebStoreMetadataProvider)
 				}
