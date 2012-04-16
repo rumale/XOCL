@@ -73,7 +73,7 @@ package com.x.example.v1
     	 * The ? operator in the following declaration indicates that the property is optional.
     	 * An optional property maps to a union{type, null} with a default of null in AVDL.
     	 * A datetime encodes date and time. The 'now' initializer supplies the current datetime.
-    	 * A datetime maps to an AVDL string with RFC822 formatting.
+    	 * A datetime maps to an AVDL string with RFC3339 format.
     	 */
     	datetime? dateCreated = now 
     	
