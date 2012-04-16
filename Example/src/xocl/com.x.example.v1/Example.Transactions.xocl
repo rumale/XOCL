@@ -66,8 +66,8 @@ package com.x.example.v1
          * The receiver of an event cannot send any return messages, and does not even have to be declared.
          * If the receiver is not expecting the message, it must send a cancellation to abort the transaction 
          *   with the Reason set to MessageOutOfSequence. 
-		 *   A cancellation uses the standard message type com.x.Acknowledgements.v1.TransactionCancelled. 
-		 *   A cancellation must be sent to the standard topic com.x.Acknowledgements.v1/TransactionCancelled.
+		 *   A cancellation uses the standard message type com.x.core.v1.TransactionCancelled. 
+		 *   A cancellation must be sent to the standard topic com.x.core.v1/TransactionCancelled.
 		 *   A cancellation must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
 		 *   A cancellation must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
          */
@@ -102,8 +102,8 @@ package com.x.example.v1
 				 *     If a receipt timeout is specified, then the receiver must send a receipt, a validation, 
 				 *       or a cancellation.
 				 *     If a receipt timeout is not specified, then the receiver must not send a receipt.
-				 *     A receipt uses the standard message type com.x.Acknowledgements.v1.MessageReceived.
-				 *     A receipt must be sent to the standard topic com.x.Acknowledgements.v1/MessageReceived.
+				 *     A receipt uses the standard message type com.x.core.v1.MessageReceived.
+				 *     A receipt must be sent to the standard topic com.x.core.v1/MessageReceived.
 				 *   A validation indicates that the receiver was able to validate the message contents.
 				 *     If the receiver cannot validate the message contents, then it must send a cancellation 
 				 *       to abort the transaction, with the Reason set to ValidationError.
@@ -112,8 +112,8 @@ package com.x.example.v1
 				 *     If a validation timeout is not specified, then the receiver must not send a validation.
 				 *     If both a receipt timeout and a validation timeout are specified, then the receiver may send 
 				 *       a validation instead of a receipt within the receipt timeout.
-				 *     A validation uses the standard message type com.x.Acknowledgements.v1.MessageValidated.
-				 *     A validation must be sent to the standard topic com.x.Acknowledgements.v1/MessageValidated.
+				 *     A validation uses the standard message type com.x.core.v1.MessageValidated.
+				 *     A validation must be sent to the standard topic com.x.core.v1/MessageValidated.
         		 */ 
         		timeouts(receipt=1h, validation=24h)
         		
