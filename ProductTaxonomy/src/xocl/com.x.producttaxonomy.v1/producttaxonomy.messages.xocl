@@ -1,0 +1,226 @@
+package com.x.producttaxonomy.v1{
+	
+		/**
+	 * Locale contains a combination of ISO language code, country code and optional variant
+	 */
+	record Locale {
+		string language;
+		string country;
+		string? variant;
+	}
+
+	record Error {
+		int code;
+		string _AVDL_message;
+		array<string>? parameters;
+	}
+
+	record Filter {
+		// we support two levels currently: 1 for summary and 2 for details
+		// the summary product type information contains id, version name, and productClassIds
+		int? detailLevel;
+		// To specify a list of channels this product type is intended for. This will filter
+		// attributes so that only attributes and recommended values of attribute that are relevant 
+		// to the list of channels will be returned.
+		array<string>? channelIds;
+	}
+	
+	record ChannelValueDecoration {
+		// Serialized representation of Channel, e.g. ebay_US
+		string channelId;
+	}
+
+	record StringAttributeValue {
+		string valueId;
+		string localizedValue;
+		// some values may only apply to certain channels, if the channelValueDecorations array is null or empty, the value applies to all channels
+		array<ChannelValueDecoration>? channelValueDecorations;
+	}
+	
+	record SearchQuery {
+		string productClassId;
+	}
+	
+	record ChannelAttributeDecoration {
+		string channelId;
+		boolean? required;
+		boolean? supportsVariation;
+	}
+	
+	record StringEnumerator {
+		string id;
+		// localized name
+		string name;
+		// some values may only apply to certain channels, if the channelValueDecorations array is null or empty, the value applies to all channels
+		array<ChannelValueDecoration>? channelValueDecorations;
+	}
+
+	record StringEnumerationAttribute {
+		// Attribute identifier, unique within a product type
+		string id;
+		// localized name
+		string name;
+		// channel specific decorations, e.g., required or optional, whether an attribute is enabled as variation variable
+		// if there is no decoration for a channel, the attribute is not applicable to that channel
+		array<ChannelAttributeDecoration>? channelAttributeDecorations;
+		string? _AVDL_description;
+
+		// id(s) of default value(s)
+		union {null, string, array<string>} defaultValue = null;
+		array<StringEnumerator> enumerators;
+		// Indicates if multiple values are allowed.
+		boolean allowMultipleValues;
+	}
+
+	record BooleanAttribute {
+		string id;
+		string name;
+		array<ChannelAttributeDecoration>? channelAttributeDecorations;
+		string? _AVDL_description = null;
+		
+		// default value
+	    boolean defaultValue;
+	}
+
+	record StringAttribute {
+		string id;
+		string name;
+		 array<ChannelAttributeDecoration>? channelAttributeDecorations;
+		string? _AVDL_description;
+		
+		int? minLength;
+		int? maxLength;
+		string? defaultValue;
+		// recommended attribute values.
+		array<StringAttributeValue>? recommendedValues;
+	}
+	
+	record ProductTypeIdVersion {
+		string productTypeId;
+		// Format: <major>.<minor>
+		string version;
+	}
+
+	record ProductClass {
+		string id;
+		// localized name
+		string name;
+		// productClass may contain sub productClasses. 
+		// Leaf node will not contain sub classes and can be associated with product types
+		array<ProductClass>? subClasses;
+		array<ProductTypeIdVersion>? productTypeIdVersions;
+	}
+	
+	record ProductType {
+		string id;
+		string? version;
+
+		// localized product name.
+		string? name;
+		string? _AVDL_description;
+		// List of product category ids which the product type is associated with
+		array<string>? productClassIds;
+		// Attribute can be StringAttribute, StringEnumerationAttribute or BooleanAttribute
+		array<union {StringAttribute, StringEnumerationAttribute, BooleanAttribute}>? attributes = null;
+	}
+	
+	record ProductTaxonomy {
+		array<ProductClass> productClasses;
+		// Format (ISO 8601): YYYY-MM-DDTHH:MMZ
+		string version;
+	}
+
+	//-----------------------------------------------------------------------------------------------------
+	// Request & Response: search product types by product class 
+	// 	- SearchProductType: Request product types by product class.
+	// 	- SearchProductTypeSucceeded: Return a collection of product type (summary)
+	// 	- SearchProductTypeFailed: Error message
+	//-----------------------------------------------------------------------------------------------------
+
+	record SearchProductType {
+		// search criteria
+		SearchQuery criteria;
+		// The locale en_US will be the default if no locale is supplied in the message.
+		Locale? locale;
+		// optional filter, by default, only product type summary will be returned
+		Filter? filter;		
+	}
+
+	record SearchProductTypeSucceeded {
+		array<ProductType> productTypes;
+		// search criteria used
+		SearchQuery criteria;
+		// locale used for localized strings
+		Locale locale;
+		// filter used
+	    Filter? filter;		
+	}
+	
+	record SearchProductTypeFailed {
+		array<Error> errors;
+	}
+
+	//-----------------------------------------------------------------------------------------------------
+	// Request & Response: Product Taxonomy Message
+	//-----------------------------------------------------------------------------------------------------
+	record GetProductTaxonomy {
+		//    - The locale en_US will be the default if no locale is supplied in the message.
+		Locale? locale;
+	}
+	
+	record GetProductTaxonomySucceeded {
+		ProductTaxonomy productTaxonomy;
+		// locale for the localized string
+		Locale locale;
+	}
+
+	record GetProductTaxonomyFailed{
+		array<Error> errors;
+	}	
+	
+	record ProductTaxonomyUpdated{
+		// Format (ISO 8601): YYYY-MM-DDTHH:MMZ
+		datetime version;
+	}
+
+	//-----------------------------------------------------------------------------------------------------
+	// Request & Response: Get product type by ids
+	//
+	// 	- GetProductType: Request a list of product types with given ids.
+	// 	- GetProductTypeSucceeded- Return a list of product types.
+	// 	- GetProductTypeFailed- error message
+	//-----------------------------------------------------------------------------------------------------
+	record GetProductType {
+		// if the productTypeIds field is null, all productTypes will be returned
+		array<string> productTypeIds;
+		// optional locale, default to en_US
+	    Locale? locale;
+		// if filter is omitted, the default behavior is to return all detailed information
+		Filter? filter;
+	}
+
+	record GetProductTypeSucceeded {
+		// list of product types
+		array<ProductType> productTypes;
+		// locale for the localized string
+		Locale locale;
+		// filter applied
+		Filter? filter;		
+	}
+
+	record GetProductTypeFailed {
+		array<Error> errors;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
