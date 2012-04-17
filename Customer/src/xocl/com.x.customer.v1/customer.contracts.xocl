@@ -1,0 +1,13 @@
+package com.x.customer.v1{
+	import com.x.customer.v1.*
+	
+	contract CustomerConsumer
+    {
+    		description "A standard consumer and observer of customer data"
+    		roles{
+	 			CustomerSearch.CustomerConsumer
+	 			CustomerSearch.CustomerConsumer<Email>
+	 			CustomerUpsert.CustomerObserver
+	 		}
+	 }	
+}
