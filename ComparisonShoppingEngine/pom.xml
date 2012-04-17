@@ -49,7 +49,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>core-xocl-contract</artifactId>
+			<artifactId>core-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

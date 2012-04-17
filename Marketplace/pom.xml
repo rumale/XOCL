@@ -50,17 +50,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>core-xocl-contract</artifactId>
+			<artifactId>core-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>authorization-xocl-contract</artifactId>
+			<artifactId>authorization-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>ordermanagement-xocl-contract</artifactId>
+			<artifactId>ordermanagement-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
