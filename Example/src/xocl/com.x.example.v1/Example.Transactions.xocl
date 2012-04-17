@@ -50,10 +50,12 @@ package com.x.example.v1
     	 *   play the receiver role at the same time in the same event or broadcast transaction.
 	     * The sender of the first message in a workflow must set the X-XC-MESSAGE-GUID-CONTINUATION 
 	     *   header to null, and the X-XC-RESULT-CORRELATION-ID to a new GUID.
-	     * The sender of any other message in a workflow must set the X-XC-MESSAGE-GUID-CONTINUATION
-	     *   header to the ID of the message that triggered the sending of the current message, and  
-	     *   the X-XC-RESULT-CORRELATION-ID header to the value it had on the message that triggered  
-	     *   the sending of the current message.
+	     *     The value of the X-XC-RESULT-CORRELATION-ID header is the workflow ID.
+	     * The sender of any other message in a workflow must set 
+	     *   the X-XC-MESSAGE-GUID-CONTINUATION header to the ID of the message that triggered the  
+	     *     sending of the current message, and  
+	     *   the X-XC-RESULT-CORRELATION-ID header to the value it had on the message that triggered the 
+	     *     sending of the current message.
     	 */
         sender
         {
