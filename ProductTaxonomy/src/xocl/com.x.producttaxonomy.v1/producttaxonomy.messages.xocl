@@ -79,7 +79,7 @@ package com.x.producttaxonomy.v1{
 		string? _AVDL_description = null;
 		
 		// default value
-	    boolean defaultValue;
+	    boolean? defaultValue;
 	}
 
 	record StringAttribute {
@@ -192,7 +192,7 @@ package com.x.producttaxonomy.v1{
 	//-----------------------------------------------------------------------------------------------------
 	record GetProductType {
 		// if the productTypeIds field is null, all productTypes will be returned
-		array<string> productTypeIds;
+		array<string>? productTypeIds;
 		// optional locale, default to en_US
 	    Locale? locale;
 		// if filter is omitted, the default behavior is to return all detailed information
