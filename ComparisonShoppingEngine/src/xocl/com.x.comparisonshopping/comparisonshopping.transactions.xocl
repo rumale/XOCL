@@ -1,0 +1,54 @@
+/*
+ * This package defines transactions used by messages in com.x.xocl.coparisonshopping
+ */
+
+package com.x.comparisonshopping.v1
+{	
+	import com.x.comparisonshopping.v1.*
+	
+ 	// This entity represents a product feed that can be
+ 	// published to a comparison shopping engine
+    entity ProductFeed
+    {   
+       	// An Prepared feed can be Published or Denied 
+        state Prepared[Published, Denied]
+                
+        // The feed was successfully published
+        state Published
+        
+		// A feed was denied by the comparison shopping engine
+        state Denied
+	} 
+    
+    // Publish a product order and get information back from the CSE about
+    // the status of each product that was offered
+    transaction PublishProductFeed response
+    {
+    	// Send the list of products to the CSE
+        sender
+        {
+        	message PublishProductFeed
+        	{        		
+				// Timeouts for the receiver to acknowledge message receipt and/or message validation
+        		timeouts(receipt=1h, validation=24h, response=3d)
+        		
+        		// How many times should we retry if one of the timeouts expires? 
+        		retries=3
+        	}
+        }
+        
+        // Receive a list of product sku and assigned CSE ids
+        receiver
+        {
+        	// The feed was accepted and processed by the CSE
+	       	success PublishProductFeedSuccess
+        	{
+            	timeouts(receipt=1h, validation=24h)
+            	retries=3
+            }
+            
+            // The feed was not accepted by the CSE
+            failure PublishProductFeedFailure
+        }
+    }
+}

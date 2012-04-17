@@ -1,0 +1,35 @@
+/*
+ * This file contains a the processes that are associated with the comparison shopping
+ * engine domain
+ */
+
+package com.x.comparisonshopping.v1
+{	
+	import com.x.comparisonshopping.v1.* 
+	
+    // Publish a set of products on a comparison shopping engine site
+    process PublishProductFeed(ProductFeed productFeed)
+    {
+        description "MarketingManager publises a list of products to a comparison shopping engine site"
+        
+        roles(TrafficGenerationManager, ComparisonShoppingPublisher)
+        
+        preconditions(productFeed[ProductFeed.Prepared])
+        
+        postconditions
+        {
+          success(productFeed[ProductFeed.Published])
+          failure(productFeed[ProductFeed.Denied])
+        }
+    }
+    
+    // The baseline worflow for processing product feeds
+    workflow StandardPublishProductFeed implements PublishProductFeed
+    {
+    	// This transaction publishes the feed to the CSE 
+        transaction PublishProductFeed
+        {
+        	roles(PublishProductFeed.TrafficGenerationManager, PublishProductFeed.ComparisonShoppingPublisher)
+        }
+    }
+}
