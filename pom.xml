@@ -67,6 +67,7 @@
 		<module>Marketplace</module>
 		<module>OrderManagement</module>
 		<module>ProductInformationManagement</module>
+	        <module>ProductTaxonomy</module>
 		<module>WebStore</module>
 	</modules>
 
@@ -113,7 +114,7 @@
 				<inherited>true</inherited>
 				<groupId>com.x.ocl</groupId>
 				<artifactId>xocl-maven-plugin</artifactId>
-				<version>1.2.2</version>
+				<version>1.2.1</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
