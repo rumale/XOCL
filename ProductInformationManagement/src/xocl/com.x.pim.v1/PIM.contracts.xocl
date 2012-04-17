@@ -11,5 +11,18 @@ package com.x.pim.v1{
 	 			ProductCreation.ProductInformationManager
 	 			ProductDeletion.ProductInformationManager
 	 		}
-	 }
+	}
+	     
+    contract ProductInformationManagementConsumer
+    {
+    		description "A read-only consumer and observer of PIM data"
+    		roles{
+	 			ProductSearch.ProductInformationConsumer
+		 		ProductLookup.ProductInformationConsumer
+	 			ProductUpdate.ProductInformationObserver
+	 			ProductCreation.ProductInformationObserver
+	 			ProductDeletion.ProductInformationObserver
+	 		}
+	}
+	 
 }	
