@@ -1,0 +1,23 @@
+/*
+ * This file contains the contract declarations for the CSE domain
+ */
+
+// A package defines a namespace and optionally a version for the elements it contains
+package com.x.comparisonshopping.v1
+{	
+	// An import brings in definitions from another package
+	import com.x.comparisonshopping.v1.* 
+	
+	// The CSE contract includes all the roles needed to a valid CSE provider
+    contract ComparisonShoppingFeedPublisher 
+    {
+    	description "A provider that supports the publishing of products for comparison and linkage to the merchant's store"
+    	
+    	// A set of roles collectivley define the implementer's responsibilities
+    	roles
+    	{
+	        PublishProductFeed.TrafficGenerationManager
+	        PublishProductFeed.ComparisonShoppingPublisher
+	    }
+    }
+}
