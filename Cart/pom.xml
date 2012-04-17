@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>cart-xocl-contract</artifactId>
-	<name>Cart XOCL Contract</name>
+	<artifactId>cart-xocl</artifactId>
+	<name>Cart XOCL</name>
 	<description>
-		The Cart XOCL contract
+		The Cart XOCL
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/Cart</connection>

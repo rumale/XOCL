@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>ordermanagement-xocl-contract</artifactId>
-	<name>Order Management XOCL Contract</name>
+	<artifactId>ordermanagement-xocl</artifactId>
+	<name>Order Management XOCL</name>
 	<description>
-		The Order Management XOCL contract
+		The Order Management XOCL
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/OrderManagement</connection>

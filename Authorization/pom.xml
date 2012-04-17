@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>authorization-xocl-contract</artifactId>
-	<name>Authorization XOCL Contract</name>
+	<artifactId>authorization-xocl</artifactId>
+	<name>Authorization XOCL</name>
 	<description>
-		The Authorization XOCL contract
+		The Authorization XOCL
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/Authorization</connection>

@@ -8,7 +8,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>ComparisonShoppingEngine-xocl</artifactId>
+	<artifactId>comparison-shopping-engine-xocl</artifactId>
 	<name>ComparisonShoppingEngine XOCL</name>
 	<description>
 		The ComparisonShoppingEngine XOCL domain

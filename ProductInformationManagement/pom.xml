@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>pim-xocl-contract</artifactId>
+	<artifactId>pim-xocl</artifactId>
 	<name>PIM XOCL Domain</name>
 	<description>
-		The Product Information Management XOCL contract
+		The Product Information Management XOCL project
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/ProductInformationManagement</connection>

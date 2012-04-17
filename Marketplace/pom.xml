@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>marketplace-xocl-contract</artifactId>
-	<name>Marketplce XOCL Contract</name>
+	<artifactId>marketplace-xocl</artifactId>
+	<name>Marketplce XOCL</name>
 	<description>
-		The Marketplace XOCL contract
+		The Marketplace XOCL project
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/Marketplace</connection>

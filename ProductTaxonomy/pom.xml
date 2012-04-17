@@ -8,7 +8,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>ProductTaxonomy-xocl</artifactId>
+	<artifactId>product-taxonomy-xocl</artifactId>
 	<name>ProductTaxonomy XOCL</name>
 	<description>
 		The ProductTaxonomy XOCL domain

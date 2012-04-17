@@ -8,10 +8,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>example-contract</artifactId>
-	<name>Example XOCL Contract</name>
+	<artifactId>example</artifactId>
+	<name>Example XOCL</name>
 	<description>
-		An example contract
+		An example xocl project
 	</description>
 	<scm>
 		<connection>scm:svn:https://svn.corp.x.com:8080/svn/x/xocl/trunk/Example</connection>

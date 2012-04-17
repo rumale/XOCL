@@ -8,7 +8,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.x.ocl</groupId>
-	<artifactId>ConsumerRating-xocl</artifactId>
+	<artifactId>consumer-rating-xocl</artifactId>
 	<name>ConsumerRating XOCL</name>
 	<description>
 		The ConsumerRating XOCL domain
