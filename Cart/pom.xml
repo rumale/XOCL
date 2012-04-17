@@ -51,32 +51,32 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>core-xocl-contract</artifactId>
+			<artifactId>core-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>customer-xocl-contract</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>com.x.ocl</groupId>
-            <artifactId>inventory-xocl-contract</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-		<dependency>
-			<groupId>com.x.ocl</groupId>
-			<artifactId>ordermanagement-xocl-contract</artifactId>
+			<artifactId>customer-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
         <dependency>
             <groupId>com.x.ocl</groupId>
-            <artifactId>pim-xocl-contract</artifactId>
+            <artifactId>inventory-xocl</artifactId>
             <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>com.x.ocl</groupId>
-			<artifactId>webstore-xocl-contract</artifactId>
+			<artifactId>ordermanagement-xocl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>com.x.ocl</groupId>
+            <artifactId>pim-xocl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>com.x.ocl</groupId>
+			<artifactId>webstore-xocl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
