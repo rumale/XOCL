@@ -46,8 +46,14 @@ package com.x.example.v1
     transaction InventoryUpdated inform
     {
     	/*
-    	 * Every transaction has exacty two roles: sender and receiver.
-    	 * One or more capabilities may play any given role at the same time.
+    	 * Every transaction has exacty two roles: sender and receiver. One or more capabilities may
+    	 *   play the receiver role at the same time in the same event or broadcast transaction.
+	     * The sender of the first message in a workflow must set the X-XC-MESSAGE-GUID-CONTINUATION 
+	     *   header to null, and the X-XC-RESULT-CORRELATION-ID to a new GUID.
+	     * The sender of any other message in a workflow must set the X-XC-MESSAGE-GUID-CONTINUATION
+	     *   header to the ID of the message that triggered the sending of the current message, and  
+	     *   the X-XC-RESULT-CORRELATION-ID header to the value it had on the message that triggered  
+	     *   the sending of the current message.
     	 */
         sender
         {
@@ -64,12 +70,12 @@ package com.x.example.v1
         
         /*
          * The receiver of an event cannot send any return messages, and does not even have to be declared.
-         * If the receiver is not expecting the message, it must send a cancellation to abort the transaction 
-         *   with the Reason set to MessageOutOfSequence. 
+         * If a message is received out of order, the receiver must send a cancellation to abort the transaction 
+         *   with the Reason set to MessageOutOfSequence.
+         *     A message is out of order if it does not follow a valid predecessor within the current workflow.
 		 *   A cancellation uses the standard message type com.x.core.v1.TransactionCancelled. 
 		 *   A cancellation must be sent to the standard topic com.x.core.v1/TransactionCancelled.
-		 *   A cancellation must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
-		 *   A cancellation must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
+		 *   See com.x.core.v1.TransactionCancelled for more information about cancellations.
          */
         receiver
 	}
@@ -98,9 +104,7 @@ package com.x.example.v1
         {        	
         	/*
 			 * The receiver of a notification or command must send acknowledgements to the sender.
-			 *   An acknowledgement must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
-			 *   An acknowledgement must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
-			 * If an acknowledgement is received out of order, then the sender must send a cancellation
+			 * If an acknowledgement is received out of order, then the sender may send a cancellation
 			 *   to abort the transaction, with the Reason set to ReceiptOutOfSequence or ValidationOutOfSequence.
         	 */
         	message OrderCreated
@@ -117,6 +121,7 @@ package com.x.example.v1
 				 *     If a receipt timeout is not specified, then the receiver must not send a receipt.
 				 *     A receipt uses the standard message type com.x.core.v1.MessageReceived.
 				 *     A receipt must be sent to the standard topic com.x.core.v1/MessageReceived.
+				 *     See com.x.core.v1.MessageReceived for more information about receipts.
 				 *   A validation indicates that the receiver was able to validate the message contents.
 				 *     If the receiver cannot validate the message contents, then it must send a cancellation 
 				 *       to abort the transaction, with the Reason set to ValidationError.
@@ -127,6 +132,7 @@ package com.x.example.v1
 				 *       a validation instead of a receipt within the receipt timeout.
 				 *     A validation uses the standard message type com.x.core.v1.MessageValidated.
 				 *     A validation must be sent to the standard topic com.x.core.v1/MessageValidated.
+				 *     See com.x.core.v1.MessageValidated for more information about validations.
         		 */ 
         		timeouts(receipt=1h, validation=24h)
         		
@@ -204,11 +210,17 @@ package com.x.example.v1
         	{					
 				/*
 				 * The receiver of a command must send a response or a cancellation to the sender.
-				 *   A response must be routed directly to the sender using the X-XC-PUBLISHER-ID header.
-				 *   A response must identify the message received using the X-XC-RESULT-CORRELATION-ID header.
+			     * A response must be routed only to the transaction sender by setting the
+			     *   X-XC-DESTINATION-ID header to the value of the X-XC-PUBLISHER-PSEUDONYM header 
+			     *   on the request message.
+			     * The sender of a response must identify the request message by setting the
+			     *   X-XC-RESULT-CORRELATION-ID header to the value it had on the request message, and by 
+			     *   setting the X-XC-MESSAGE-GUID-CONTINUATION header to the ID of the request message.
 				 * A response indicates whether the operation succeeded or failed and may contain additional data.
 				 * If a response is received out of order, then the sender must send a cancellation
 				 *   to abort the transaction, with the Reason set to ResponseOutOfSequence.
+				 *     A response is out of order if it does not arrive within the context of the transaction to 
+				 *       which it belongs. 
 				 * The timeout for a response is specified using the response keyword.
 				 *   It is measured from the start of the transaction to the receipt of the reponse.
 				 * If a response timeout is not specified, it defaults to 30s for queries, and to 3m for all 

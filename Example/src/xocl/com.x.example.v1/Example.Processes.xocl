@@ -67,6 +67,8 @@ package com.x.example.v1
     	 
     	/*
     	 * A workflow is a sequence of actions. This action calls the transaction ShipOrder.
+    	 * In a workflow, each action is triggered by a preceding action, except the first action, 
+    	 *   which starts the workflow.
     	 */
         transaction ShipOrder(order)
         {
