@@ -1,12 +1,22 @@
 package com.x.inventory.v1{	
 	import com.x.inventory.v1.*
 	
-    contract Inventory
+    contract InventoryManager
     {
     		description "A standard Inventory system"
     		roles{
 	 			StockItemLookup.InventoryManager
 	 			StockItemUpdate.InventoryManager
 	 		}
-	 }
+	}
+    
+    contract InventoryConsumer
+    {
+    		description "A read-only consumer and observer of inventory data"
+    		roles{
+	 			StockItemLookup.InventoryConsumer
+	 			StockItemUpdate.InventoryObserver
+	 		}
+	}
+
 }	
