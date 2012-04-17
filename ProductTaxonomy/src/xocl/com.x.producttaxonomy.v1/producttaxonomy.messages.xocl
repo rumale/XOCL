@@ -212,15 +212,4 @@ package com.x.producttaxonomy.v1{
 		array<Error> errors;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
