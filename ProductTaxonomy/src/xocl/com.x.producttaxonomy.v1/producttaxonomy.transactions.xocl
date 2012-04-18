@@ -7,7 +7,7 @@ package com.x.producttaxonomy.v1{
     transaction SearchProductType query {
         sender {
         	message SearchProductType "/productTaxonomy/productType/search" {
-        		timeouts(response=30s)     		
+        		timeouts(response=1m)     		
         	}
         }
         receiver {
@@ -19,7 +19,7 @@ package com.x.producttaxonomy.v1{
 	transaction GetProductTaxonomy query {
         sender {
         	message GetProductTaxonomy  "/productTaxonomy/get" {
-        		timeouts(response=20m)     		
+        		timeouts(response=30s)     		
         	}
         }
         receiver {
@@ -38,7 +38,7 @@ package com.x.producttaxonomy.v1{
     transaction GetProductType query {
         sender {
         	message GetProductType "/productTaxonomy/productType/get" {
-        		timeouts(response=30s)     		
+        		timeouts(response=5m)     		
         	}
         }
         receiver {
