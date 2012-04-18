@@ -49,7 +49,7 @@ package com.x.ordermanagement.v1 {
 		string giftMessage
 	}
 	
-	record CustomerInfo {
+	record CustomerInfo confidential {
 		Name name
 		Email? email
 		Phone? phone
@@ -62,7 +62,7 @@ package com.x.ordermanagement.v1 {
 		CurrencyAmount amount
 	}
 	
-	record ShipTo {
+	record ShipTo confidential {
 		Name name
 		Address address
 		GiftTag giftTag
