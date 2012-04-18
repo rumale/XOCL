@@ -54,13 +54,6 @@ package com.x.marketplace.v3{
 		string siteName;
 	}
 	
-	
-	
-    enum RefundMethod {
-		MONEY_BACK,
-		EXCHANGE_ONLY,
-		STORE_CREDIT
-	}
 	enum RefundMethod {
 		MONEY_BACK,
 		EXCHANGE_ONLY,
