@@ -18,11 +18,11 @@ package com.x.customer.v1{
 		FEMALE
 	}
 	
-	record CustomerData {  //TODO: Security annotations here.
-		Name  fullName;	         
-	    array<Address>? addresses;
-		Phone? primaryPhone;
-		Email email; 
+	record CustomerData confidential { 
+		Name fullName ;	   //confidential        
+	    array<Address>? addresses; //confidential  
+		Phone? primaryPhone; //confidential  
+		Email email;  //confidential  
 		Gender? gender;
 		datetime? dateOfBirth;
 		string? company;
@@ -33,7 +33,7 @@ package com.x.customer.v1{
 	    map<string>? sourceIds;
 	}  
 	
-    record Customer extends CustomerData{
+    record Customer confidential extends CustomerData {
 		union{guid, EntityId} id;   //id is created by the system that creates the record.	
 	} 
 	
@@ -57,7 +57,7 @@ package com.x.customer.v1{
 		/*  */
 	}
 	
-	record SearchCustomerSucceeded{
+	record SearchCustomerSucceeded confidential{
 		
 	     array<Customer> customers;
 		 long totalItemsFound;
