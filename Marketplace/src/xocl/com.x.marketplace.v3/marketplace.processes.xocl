@@ -55,7 +55,7 @@ package com.x.marketplace.v3{
 		
 		roles(MarketplaceMerchantConsole, MarketplacePolicyManager, MarketplaceMetadataConsumer, MarketplaceMetadataProvider)
 		
-		preconditions(!exists(policyGroup))
+		preconditions(!exists(policyGroup)) 
 	
 		workflow 
 		{
