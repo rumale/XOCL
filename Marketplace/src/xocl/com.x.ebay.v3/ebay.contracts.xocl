@@ -27,7 +27,7 @@ package com.x.marketplace.v3{
 	        StoreLookup.MarketplaceMarketplaceMetadataProvider
 	        
 	   		//Order roles
-	   		ProcessSalesChannelOrder.Marketplace<MarketplaceOrder> 
+	   		ProcessSalesChannelOrder.Marketplace<SalesChannelOrder> 
 	   		
 	   		//Auth roles
 	   		AuthorizationGrant.AuthorizationProvider
