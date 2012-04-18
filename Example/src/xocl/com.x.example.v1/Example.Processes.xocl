@@ -138,7 +138,7 @@ package com.x.example.v1
      * A process can have variants. Process variants control the inclusion or exclusion of workflow 
      *   features, and can bind to transaction variants.
      */
-    process OrderFulfillment<WithCreationMetadata, WithAuthorization>(Order order)
+    process OrderFulfillment<WithConfiguration, WithAuthorization>(Order order)
     {
         description "Merchant fulfills the sales-channel order from Buyer using Merchant Console"
         
@@ -159,10 +159,10 @@ package com.x.example.v1
 	    	{
 		    	/*
 		    	 * This transaction call maps workflow variants to transaction variants - 
-		    	 *   For process variant WithCreationMetadata, the workflow calls the first transaction variant. 
+		    	 *   For process variant WithConfiguration, the workflow calls the first transaction variant. 
 		    	 *   For process variant WithAuthorization, the workflow calls the second transaction variant.
 		    	 */
-		        transaction OrderCreated<OrderFulfillment.WithCreationMetadata, OrderFulfillment.WithAuthorization>
+		        transaction OrderCreated<OrderFulfillment.WithConfiguration, OrderFulfillment.WithAuthorization>
 		        {
 		        	roles(OrderManager, OrderObserver)
 		        }
@@ -191,6 +191,11 @@ package com.x.example.v1
             	 * A workflow can call other workflows, passing arguments and binding process roles positionally.
             	 */
                 workflow OrderShipment(order) 
+                {
+                	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
+                }
+    	
+                workflow OrderDropShipment(order) 
                 {
                 	roles(OrderManager, InventoryManager, ShippingManager, OfferManager)
                 }

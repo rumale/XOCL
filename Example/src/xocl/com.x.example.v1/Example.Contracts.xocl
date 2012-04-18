@@ -11,43 +11,105 @@ package com.x.example.v1
 	 * A contract is implemented by a capability.
 	 * A contract has a description and a set of process roles.
 	 */
-    contract OutsourceOrderManager 
-    {
-    	description "A company that outsources all order fulfillment functions"
+    contract OutsourceOrderManager {
+    	description "A capability that outsources order fulfillment functions"
     	
     	/*
     	 * The roles collectivley define the capability's responsibilities.
     	 */
-    	roles
-    	{
+    	roles {
 	        OrderFulfillment.OrderManager
-	        OrderFulfillment.OfferManager
 	    }
+    }
+    
+    contract OutsourceOrderManagerWithAuthorization {
+    	description "A capability that outsources order fulfillment functions with authorization"
+    	roles {
+    		/*
+    		 * A role may be qualified by a variant, meaning that the responsiblity is to 
+    		 *   implement the specified role in the specified variant of the process.
+    		 */
+	        OrderFulfillment.OrderManager<WithAuthorization>
+	    }
+    }
+    
+    contract OutsourceOrderManagerWithConfiguration {
+    	description "A capability that outsources order fulfillment functions with configuration"
+    	roles {
+	        OrderFulfillment.OrderManager<WithConfiguration>
+	    }
+    }
+    
+    contract InventoryManager {
+    	description "A capability that performs inventory management functions"
+    	roles {
+    		/*
+    		 * A contract may aggregate multiple roles to be played by the same capability.
+    		 * All variants in which the capability will participate must be listed.
+    		 */
+	        OrderFulfillment.InventoryManager	        
+	        OrderFulfillment.InventoryManager<WithAuthorization>	        
+	        OrderFulfillment.InventoryManager<WithConfiguration>	        
+
+	        OrderFulfillment.WarehouseManager
+	        OrderFulfillment.WarehouseManager<WithAuthorization>
+	        OrderFulfillment.WarehouseManager<WithConfiguration>
+        }
+    }
+    
+    contract OfferManager {
+    	description "A capability that manages offers on sales channels"
+    	roles {
+        	OrderFulfillment.OfferManager
+        	OrderFulfillment.OfferManager<WithAuthorization>
+        	OrderFulfillment.OfferManager<WithConfiguration>
+    	}    	
     }
     
     /*
      * A contract can extend one or more other contracts.
      * Extending a contract causes its roles to be added to the extender.
      */
-    contract InHouseOrderManager extends OutsourceOrderManager
-    {
-    	description "A company that performs all order fulfillment functions"
-    	roles
-    	{
-    		/*
-    		 * A role may be qualified by a variant, meaning that the responsiblity is to 
-    		 *   implement the specified role in the specified variant of the process.
-    		 */
-	        OrderFulfillment.OrderObserver<WithCreationMetadata>
-	        OrderFulfillment.InventoryManager<WithAuthorization>
-	        OrderFulfillment.WarehouseManager<WithAuthorization>
-	        
+    contract InHouseOrderManager extends OutsourceOrderManager, InventoryManager {
+    	description "A capability that performs all order fulfillment functions in house"
+    	roles {
+	        OrderFulfillment.OrderManager<WithAuthorization>
+	        OrderFulfillment.OrderManager<WithConfiguration>
+
+        	OrderFulfillment.OfferManager
+        	OrderFulfillment.OfferManager<WithAuthorization>
+        	OrderFulfillment.OfferManager<WithConfiguration>
+    	}
+    }
+    
+    contract ShippingManager {
+    	description "A capability that performs shipment functions"
+    	roles {
+	        OrderShipment.ShippingManager
+	        OrderShipment.ShippingManager<WithAuthorization>
+	        OrderShipment.ShippingManager<WithConfiguration>
+        }
+    }
+    
+    contract DropShippingManager {
+    	description "A capability that performs drop shipment functions"
+    	roles {
 	        /*
-	         * A contract may span multiple processes, and may optionally specify the 
-	         *   workflow that must be supported if more than one workflow implements the 
-	         *   specified process.
+	         * A contract may optionally specify the workflow that must be supported, if more than one 
+	         *   workflow implements the specified process.
 	         */
 	        OrderShipment.ShippingManager(OrderDropShipment)
+	        OrderShipment.ShippingManager<WithAuthorization>(OrderDropShipment)
+	        OrderShipment.ShippingManager<WithConfiguration>(OrderDropShipment)
         }
+    }
+    
+    contract OrderObserver {
+    	description "A capability that observes activity in this domain"
+    	roles {
+	        OrderFulfillment.OrderObserver
+	        OrderFulfillment.OrderObserver<WithAuthorization>
+	        OrderFulfillment.OrderObserver<WithConfiguration>
+    	}
     }
 }
