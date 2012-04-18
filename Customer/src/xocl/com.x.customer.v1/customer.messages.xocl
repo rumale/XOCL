@@ -34,7 +34,7 @@ package com.x.customer.v1{
 	}  
 	
     record Customer extends CustomerData{
-		guid id;   //GUID is created by the system that creates the record.	
+		union{guid, EntityId} id;   //id is created by the system that creates the record.	
 	} 
 	
 	record SearchCustomer{
