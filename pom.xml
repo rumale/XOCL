@@ -116,7 +116,7 @@
 				<inherited>true</inherited>
 				<groupId>com.x.ocl</groupId>
 				<artifactId>xocl-maven-plugin</artifactId>
-				<version>1.2.2</version>
+				<version>1.2.3</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
@@ -126,6 +126,7 @@
 						<configuration>
 							<sourceDirectory>${project.basedir}/src/xocl</sourceDirectory>
 							<xocltoavdl.output>${project.build.directory}/avro-gen</xocltoavdl.output>
+							<legacyMode>false</legacyMode>
 						</configuration>
 					</execution>
 				</executions>

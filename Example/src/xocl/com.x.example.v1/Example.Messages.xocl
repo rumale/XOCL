@@ -37,10 +37,10 @@ package com.x.example.v1
     	/*
     	 * A property is defined using the pattern <type><name>.
     	 * An optional assignment expression may be used to define the default value of the property.
-    	 * A guid is a unique ID. The 'new' initializer supplies a new unique ID.
+    	 * A guid is a unique ID.
     	 * A guid maps to an AVDL string formatted as a GUID by the implementation.
     	 */
-		guid orderID = new
+		guid orderID
 
     	/*
     	 * This property has an enumerated type, so it is initialized with an enumeration literal.
@@ -72,10 +72,10 @@ package com.x.example.v1
     	/*
     	 * The ? operator in the following declaration indicates that the property is optional.
     	 * An optional property maps to a union{type, null} with a default of null in AVDL.
-    	 * A datetime encodes date and time. The 'now' initializer supplies the current datetime.
+    	 * A datetime encodes date and time.
     	 * A datetime maps to an AVDL string with RFC3339 format.
     	 */
-    	datetime? dateCreated = now 
+    	datetime? dateCreated 
     	
     	/*
     	 * The bytes type maps directly to the AVDL equivalent and has the same semantics.
