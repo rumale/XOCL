@@ -50,6 +50,7 @@ package com.x.ordermanagement.v1 {
 	}
 	
 	record CustomerInfo confidential {
+		union{guid, EntityId} id;   //id is created by the system that creates the record.	
 		Name name
 		Email? email
 		Phone? phone
